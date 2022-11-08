@@ -59,8 +59,6 @@ public class Client {
 		catch (IOException e) {
 			System.out.println(e);
 		}
-		
-		
 	}
 	
 	public static void main(String args[]) {
