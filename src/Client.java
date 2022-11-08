@@ -21,20 +21,35 @@ public class Client {
 			
 			Scanner scanner = new Scanner(System.in);
 			
-			String clientMsg = "";
-			while (true) {
-				clientMsg = scanner.nextLine();
-				
-				writer.write(clientMsg);
-				writer.newLine();
-				writer.flush();
-				
-				System.out.println("Server: " + reader.readLine());
-				
-				if (clientMsg.equals("logout")) {
-					break;
-				}
-			}
+			String accNum = "";
+			String pin = "";
+			
+			System.out.println("Enter card number: ");
+			accNum = scanner.nextLine();
+			writer.write(accNum);
+			writer.newLine();
+			writer.flush();
+			
+			System.out.println("Enter PIN: ");
+			pin = scanner.nextLine();
+			writer.write(pin);
+			writer.newLine();
+			writer.flush();
+			
+			System.out.println("Server: " + reader.readLine());
+//			while (true) {
+//				clientMsg = scanner.nextLine();
+//				
+//				writer.write(clientMsg);
+//				writer.newLine();
+//				writer.flush();
+//				
+//				System.out.println("Server: " + reader.readLine());
+//				
+//				if (clientMsg.equals("logout")) {
+//					break;
+//				}
+//			}
 		}
 		catch(IOException e) {
 			System.out.println(e);

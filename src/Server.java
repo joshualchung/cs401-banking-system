@@ -47,17 +47,26 @@ public class Server {
 				writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 				reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				
-				String s = "";
-				while (true) {
-					s = reader.readLine();
-					System.out.println("Client: " + s);
-					writer.write("Sent Message");
-					writer.newLine();
-					writer.flush();
-					if (s.equals("logout")) {
-						break;
-					}
-				}
+				String accNum = "";
+				String pin = "";
+				accNum = reader.readLine();
+				pin = reader.readLine();
+				System.out.println("Client acc: " + accNum);
+				System.out.println("Client PIN: " + pin);
+				writer.write("Received info");
+				writer.newLine();
+				writer.flush();
+				
+//				while (true) {
+//					s = reader.readLine();
+//					System.out.println("Client: " + s);
+//					writer.write("Sent Message");
+//					writer.newLine();
+//					writer.flush();
+//					if (s.equals("logout")) {
+//						break;
+//					}
+//				}
 			}
 			catch (IOException e) {
 				e.printStackTrace();
