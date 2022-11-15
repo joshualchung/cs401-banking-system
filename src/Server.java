@@ -1,8 +1,11 @@
 import java.net.*;
 import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
 public class Server {
 	private ServerSocket server = null;
-	
+	private HashMap<String, Customer> customers;
+	private HashMap<Integer, Account> accounts;
 	public Server(int port) {
 		try {
 			server = new ServerSocket(port);
@@ -30,8 +33,51 @@ public class Server {
 				}
 			}
 		}
-
 	}
+	
+	// customers.txt format
+	// first name, last name, card number, PIN, account numbers (checking/saving)
+	public void loadCustomers() {
+		try {
+			File customerData = new File("customers.txt");
+			Scanner reader = new Scanner(customerData);
+			reader.useDelimiter(Pattern.compile("[\\r\\n,]+"));
+			while (reader.hasNext()) {
+				String first = reader.next().toUpperCase();
+				String last = reader.next().toUpperCase();
+				int cardNum = Integer.parseInt(reader.next());
+				int PIN = Integer.parseInt(reader.next());
+				List<Integer> customerAccounts = new ArrayList<Integer>();
+				// customersAccounts[0] = checking, customerAccounts[1] = savings
+				customerAccounts.add(Integer.parseInt(reader.next()));
+				customerAccounts.add(Integer.parseInt(reader.next()));
+			}
+			reader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// accounts.txt format
+	// account number, balance, history
+	// NO HISTORY YET
+	public void loadAccounts() {
+		try {
+			File accountData = new File("accounts.txt");
+			Scanner reader = new Scanner(accountData);
+			reader.useDelimiter(Pattern.compile("[\\r\\n,]+"));
+			while (reader.hasNext()) {
+				int accNum = Integer.parseInt(reader.next());
+				double balance = Double.parseDouble(reader.next());
+			}
+			reader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	private static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
@@ -57,16 +103,6 @@ public class Server {
 				writer.newLine();
 				writer.flush();
 				
-//				while (true) {
-//					s = reader.readLine();
-//					System.out.println("Client: " + s);
-//					writer.write("Sent Message");
-//					writer.newLine();
-//					writer.flush();
-//					if (s.equals("logout")) {
-//						break;
-//					}
-//				}
 			}
 			catch (IOException e) {
 				e.printStackTrace();
