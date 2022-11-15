@@ -33,15 +33,14 @@ public class Server {
 				}
 			}
 		}
-
 	}
 	
 	// customers.txt format
 	// first name, last name, card number, PIN, account numbers (checking/saving)
 	public void loadCustomers() {
 		try {
-			File accountData = new File("customers.txt");
-			Scanner reader = new Scanner(accountData);
+			File customerData = new File("customers.txt");
+			Scanner reader = new Scanner(customerData);
 			reader.useDelimiter(Pattern.compile("[\\r\\n,]+"));
 			while (reader.hasNext()) {
 				String first = reader.next().toUpperCase();
@@ -52,6 +51,25 @@ public class Server {
 				// customersAccounts[0] = checking, customerAccounts[1] = savings
 				customerAccounts.add(Integer.parseInt(reader.next()));
 				customerAccounts.add(Integer.parseInt(reader.next()));
+			}
+			reader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// accounts.txt format
+	// account number, balance, history
+	// NO HISTORY YET
+	public void loadAccounts() {
+		try {
+			File accountData = new File("accounts.txt");
+			Scanner reader = new Scanner(accountData);
+			reader.useDelimiter(Pattern.compile("[\\r\\n,]+"));
+			while (reader.hasNext()) {
+				int accNum = Integer.parseInt(reader.next());
+				double balance = Double.parseDouble(reader.next());
 			}
 			reader.close();
 			
