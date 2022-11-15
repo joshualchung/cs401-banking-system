@@ -37,19 +37,6 @@ public class Client {
 			writer.flush();
 			
 			System.out.println("Server: " + reader.readLine());
-//			while (true) {
-//				clientMsg = scanner.nextLine();
-//				
-//				writer.write(clientMsg);
-//				writer.newLine();
-//				writer.flush();
-//				
-//				System.out.println("Server: " + reader.readLine());
-//				
-//				if (clientMsg.equals("logout")) {
-//					break;
-//				}
-//			}
 		}
 		catch(IOException e) {
 			System.out.println(e);
