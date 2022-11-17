@@ -94,7 +94,7 @@ public class Server {
 				Login loginRequest = (Login)objectIn.readObject();
 
 				// verify card number with customer and PIN
-					// if correct send back List of Accounts
+					// if correct open bank gui for card
 					// else send back incorrect user/password error
 				
 				

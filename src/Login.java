@@ -2,9 +2,9 @@ import java.io.Serializable;
 
 public class Login implements Serializable {
 	private String cardNum;
-	private String pin;
+	private int pin;
 	
-	public Login(String cardNum, String pin) {
+	public Login(String cardNum, int pin) {
 		setCardNum(cardNum);
 		setPin(pin);
 	}
@@ -13,7 +13,7 @@ public class Login implements Serializable {
 		this.cardNum = cardNum;
 	}
 	
-	public void setPin(String pin) {
+	public void setPin(int pin) {
 		this.pin = pin;
 	}
 	
@@ -21,7 +21,7 @@ public class Login implements Serializable {
 		return cardNum;
 	}
 	
-	public String getPin() {
+	public int getPin() {
 		return pin;
 	}
 	

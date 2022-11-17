@@ -18,11 +18,11 @@ public class Client {
 			
 			// Login object created for client login request
 			String accNum = "";
-			String pin = "";
+			int pin;
 			System.out.println("Enter card number: ");
 			accNum = scanner.nextLine();
 			System.out.println("Enter PIN: ");
-			pin = scanner.nextLine();
+			pin = Integer.parseInt(scanner.nextLine());
 			Login customerLogin = new Login(accNum, pin);
 			objectOut.writeObject(customerLogin);
 			
