@@ -1,23 +1,24 @@
+import java.io.Serializable;
 
-public class Login {
-	private String accountNo;
+public class Login implements Serializable {
+	private String cardNum;
 	private String pin;
 	
-	public Login(String accountNo, String pin) {
-		//test
-		//test
+	public Login(String cardNum, String pin) {
+		setCardNum(cardNum);
+		setPin(pin);
 	}
 	
-	public void setAccount(String accountNo) {
-		this.accountNo = accountNo;
+	public void setCardNum(String cardNum) {
+		this.cardNum = cardNum;
 	}
 	
 	public void setPin(String pin) {
 		this.pin = pin;
 	}
 	
-	public String getAccount() {
-		return accountNo;
+	public String getCardNum() {
+		return cardNum;
 	}
 	
 	public String getPin() {
