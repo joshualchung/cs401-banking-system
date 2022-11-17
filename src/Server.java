@@ -12,7 +12,6 @@ public class Server {
 			server.setReuseAddress(true);
 			System.out.println("Server started");
 			
-			
 			while (true) {
 				Socket client = server.accept();
 				
@@ -87,33 +86,32 @@ public class Server {
 		}
 		
 		public void run() {
-			BufferedReader reader = null;
-			BufferedWriter writer = null;
+			ObjectInputStream objectIn = null;
+			ObjectOutputStream objectOut = null;
 			try {
-				writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-				reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				objectOut = new ObjectOutputStream(clientSocket.getOutputStream());
+				objectIn = new ObjectInputStream(clientSocket.getInputStream());
+				Login loginRequest = (Login)objectIn.readObject();
+
+				// verify card number with customer and PIN
+					// if correct open bank gui for card
+					// else send back incorrect user/password error
 				
-				String accNum = "";
-				String pin = "";
-				accNum = reader.readLine();
-				pin = reader.readLine();
-				System.out.println("Client acc: " + accNum);
-				System.out.println("Client PIN: " + pin);
-				writer.write("Received info");
-				writer.newLine();
-				writer.flush();
 				
 			}
 			catch (IOException e) {
 				e.printStackTrace();
 			}
+			catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 			finally {
 				try {
-					if (writer != null) {
-						writer.close();
+					if (objectIn != null) {
+						objectIn.close();
 					}
-					if (reader != null) {
-						reader.close();
+					if (objectOut != null) {
+						objectOut.close();
 					}
 					if (clientSocket != null) {
 						clientSocket.close();
