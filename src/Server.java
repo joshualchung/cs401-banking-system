@@ -4,14 +4,15 @@ import java.util.*;
 import java.util.regex.Pattern;
 public class Server {
 	private ServerSocket server = null;
-	private HashMap<String, Customer> customers;
-	private HashMap<Integer, Account> accounts;
+	private HashMap<String, Customer> customers;	// card number to Customer
+	private HashMap<Integer, Account> accounts;		// account number to account
 	public Server(int port) {
 		try {
 			server = new ServerSocket(port);
 			server.setReuseAddress(true);
 			System.out.println("Server started");
-			
+			loadCustomers();
+			loadAccounts();
 			while (true) {
 				Socket client = server.accept();
 				
@@ -25,6 +26,8 @@ public class Server {
 		finally {
 			if (server != null) {
 				try {
+					// save customers/accounts back into file
+					save();
 					server.close();
 				}
 				catch (IOException e) {
@@ -73,6 +76,34 @@ public class Server {
 			reader.close();
 			
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void save() {
+		try {
+			FileWriter accountsFile = new FileWriter("accounts.txt");
+			FileWriter customersFile = new FileWriter("customers.txt");
+			for (Customer customer : customers.values()) {
+				// write customer to file
+				customersFile.write(String.format("%s,%s,%s,%o,%o,%o\n",
+						customer.getFirstName(),
+						customer.getLastName(),
+						customer.getCardNum(),
+						customer.getPin(),
+						customer.getAccounts().get(0).getAccount(),
+						customer.getAccounts().get(1).getAccount()));
+			}
+			for (Account account : accounts.values()) {
+				// write customer to file
+				// HISTORY NOT INCLUDED YET. TO BE INCLUDED LATER
+				accountsFile.write(String.format("%o,%f\n",
+						account.getAccount(),
+						account.getBalance()));
+			}
+			accountsFile.close();
+			customersFile.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
