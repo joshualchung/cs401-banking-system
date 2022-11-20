@@ -1,15 +1,15 @@
 
 public class Account {
-	private String accountNum;
+	private int accountNum;
 	private double balance;
 	// private List<Transaction> to implement later
 	
-	public Account(String accountNum, double balance) {
+	public Account(int accountNum, double balance) {
 		setAccount(accountNum);
 		setBalance(balance);
 	}
 	
-	public void setAccount(String account) {
+	public void setAccount(int account) {
 		accountNum = account;
 	}
 	
@@ -17,7 +17,7 @@ public class Account {
 		this.balance = balance;
 	}
 	
-	public String getAccount() {
+	public int getAccount() {
 		return accountNum;
 	}
 	
