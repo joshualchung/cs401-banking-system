@@ -35,7 +35,19 @@ public class Customer {
 		this.accounts = accounts;
 	}
 	
-	public String getCard() {
+	public String getFirstName() {
+		return firstName;
+	}
+	
+	public String getLastName() {
+		return lastName;
+	}
+	
+	public List<Account> getAccounts() {
+		return accounts;
+	}
+	
+	public String getCardNum() {
 		return cardNum;
 	}
 	
