@@ -71,7 +71,7 @@ public class BankTellerGUI implements ActionListener{
 		//login button
 		login.setBounds(115, 200, 65, 25);
 		login.setFocusable(false);
-		//login.addActionListener(this);
+		login.addActionListener(this);
 		
 		userID = new JTextField(20);
 		userID.setBounds(15, 90, 165, 25);
@@ -151,8 +151,8 @@ public class BankTellerGUI implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == login) {
-			@SuppressWarnings("deprecation")
 			String username = userID.getText();
+			@SuppressWarnings("deprecation")
 			String password = passwordText.getText();
 			
 			//removes userId and password after pressing login button
