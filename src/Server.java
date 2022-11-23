@@ -18,7 +18,7 @@ public class Server {
 	}
 	
 	// teller user : teller password
-	private static HashMap<String, Teller> tellers = new HashMap<String, Teller>();
+	private static HashMap<String, TellerLogin> tellers = new HashMap<String, TellerLogin>();
 	{
 		loadTellers();
 	}
@@ -109,7 +109,7 @@ public class Server {
 			while (reader.hasNext()) {
 				String user = reader.next();
 				String password = reader.next();
-				Teller teller = new Teller(user, password);
+				TellerLogin teller = new TellerLogin(user, password);
 				tellers.put(user, teller);
 			}
 			reader.close();
@@ -168,7 +168,6 @@ public class Server {
 						// SEND FAILED LOGIN
 				while (request.getType().equals(RequestType.CUSTOMER_LOGIN)) {
 					Login loginRequest = (Login)objectIn.readObject();
-					System.out.println(loginRequest.getPin());
 					String customerCard = loginRequest.getCardNum();
 					int customerPIN = loginRequest.getPin();
 					Customer customer = customers.get(customerCard);
@@ -186,6 +185,23 @@ public class Server {
 				}
 				
 				// TELLER_LOGIN
+				while (request.getType().equals(RequestType.TELLER_LOGIN)) {	
+					TellerLogin loginRequest = (TellerLogin)objectIn.readObject();
+					String username = loginRequest.getUsername();
+					String password = loginRequest.getPassword();
+					TellerLogin teller = tellers.get(username);
+					
+					if (teller != null && teller.getPassword().equals(password)) {
+						request.setStatus(Status.SUCCESS);
+						System.out.println(request.getStatus());
+						objectOut.writeObject(request);
+					} else {
+						request.setStatus(Status.FAIL);
+						System.out.println(request.getStatus());
+						objectOut.writeObject(request);
+					}
+					request = (Request)objectIn.readObject();
+				}
 				
 				
 				

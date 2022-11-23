@@ -1,9 +1,10 @@
+import java.io.Serializable;
 
-public class Teller {
+public class TellerLogin implements Serializable{
 	private String username;
 	private String password;
 	
-	public Teller(String username, String password) {
+	public TellerLogin(String username, String password) {
 		setUsername(username);
 		setPassword(password);
 	}
