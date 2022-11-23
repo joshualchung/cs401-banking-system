@@ -2,6 +2,14 @@ import javax.swing.*;
 import javax.awt.*;
 import javax.awt.event;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
 public class LoginGUI {
 	//private Client client;
 	private JFrame frame;

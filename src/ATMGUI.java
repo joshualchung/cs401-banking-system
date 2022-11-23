@@ -31,23 +31,23 @@ public class ATMGUI implements ActionListener{
 	private static JLabel label2 = new JLabel();
 	private static JLabel label3 = new JLabel();
 	
-	JTextField userID;
-	JPasswordField passwordText;
+	JTextField cardNumber;
+	JPasswordField userPIN;
 	
-	private Socket socket;
-	private ObjectOutputStream objectOutputStream;
-    private ObjectInputStream objectInputStream;
+	protected Socket socket;
+	protected ObjectOutputStream objectOutputStream;
+    protected ObjectInputStream objectInputStream;
     
     public ATMGUI() throws IOException{
     	login.setBounds(115, 200, 65, 25);
     	login.setFocusable(false);
     	login.addActionListener(this);
     	
-    	userID = new JTextField(20);
-    	userID.setBounds(15, 90, 165, 25);
+    	cardNumber = new JTextField(20);
+    	cardNumber.setBounds(15, 90, 165, 25);
     	
-    	passwordText = new JPasswordField();
-    	passwordText.setBounds(15, 155, 165, 25);
+    	userPIN = new JPasswordField();
+    	userPIN.setBounds(15, 155, 165, 25);
     	
     	label1.setText("ATM");								//text
 		label1.setHorizontalAlignment(JLabel.CENTER);		//placement within panel 
@@ -125,62 +125,74 @@ public class ATMGUI implements ActionListener{
 		subw.add(label3);		//password label 
 		
 		//Center panel's right side
-		subc.add(userID);
-		subc.add(passwordText);
+		subc.add(cardNumber);
+		subc.add(userPIN);
 		subc.add(login);
 		
 		frame.setVisible(true);	//makes frame visible
-		
-		socket = new Socket("localhost", 7777);
-		objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        objectInputStream = new ObjectInputStream(socket.getInputStream());
+		connectToServer();
+    }
+	    public void connectToServer() {
+	    	try {
+				socket = new Socket("localhost", 1234);
+				System.out.println("Client connected to " + socket.getPort());
+				objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+				objectInputStream = new ObjectInputStream(socket.getInputStream());
+				
+			}
+			catch(IOException e) {
+				e.printStackTrace();
+			}
     }
     
-    @Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == login) {
-			String id = userID.getText();
-			@SuppressWarnings("deprecation")
-			String password = passwordText.getText();
-			Login login = new Login(id, password);
-			
-			//removes userId and password after pressing login button
-			userID.setText("");		
-			passwordText.setText("");			
-			
-			Request request = new loginRequest(login);
-			try {
-				objectOutputStream.writeObject(request);
-				loginRequest response = (loginRequest)objectInputStream.readObject();
-				if (response.getStatus() == Status.SUCCESS) {
-					if (response.getUser() instanceof Customer) {
+	    @Override
+		public void actionPerformed(ActionEvent e) {
+			if(e.getSource() == login) {
+				@SuppressWarnings("deprecation")
+				int pin = Integer.parseInt(userPIN.getText());
+				String cardNum = cardNumber.getText();
+				
+				//removes userId and password after pressing login button
+				cardNumber.setText("");		
+				userPIN.setText("");			
+				
+				Login customerLogin = new Login(cardNum, pin);
+				try {
+					// send customer login request
+					Request loginRequest = new Request(RequestType.CUSTOMER_LOGIN);
+					objectOutputStream.writeObject(loginRequest);
+					objectOutputStream.flush();
+					objectOutputStream.writeObject(customerLogin);
+					Request response = (Request)objectInputStream.readObject();
+					System.out.println(response.getStatus());
+					
+					if (response.getStatus() == Status.SUCCESS) {
 						frame.dispose();
-						System.out.println(((loginRequest)response).getUser().getName());
-						OptionATMGUI option = new OptionATMGUI((loginRequest)response);
-						socket.close();
+						System.out.println("Successful login responded");
+						OptionATMGUI option = new OptionATMGUI(response);
 					} else {
 						JOptionPane.showMessageDialog(
 			                    null, 
 			                    "Login Failed", 
-			                    "The user ID or password is incorrect.", 
+			                    "The user ID or password is incorrect. This is easily corrected by typing the correct user name and password.", 
 			                    JOptionPane.ERROR_MESSAGE);
 					}
+
+				} catch (IOException | ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-			} catch (IOException | ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
 			}
 		}
-	}
-	
-	public static void main(String[] args) throws ClassNotFoundException {
 		
-		try {
-			ATMGUI gui = new ATMGUI();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		public static void main(String[] args) throws ClassNotFoundException {
+			
+			try {
+				ATMGUI gui = new ATMGUI();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
+		}
 	}
-}

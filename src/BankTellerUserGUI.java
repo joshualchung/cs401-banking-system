@@ -123,10 +123,20 @@ public class BankTellerUserGUI implements ActionListener{
 		
 		frame.setVisible(true);	//makes frame visible
 		
-		socket = new Socket("localhost", 7777);
-		objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-	    objectInputStream = new ObjectInputStream(socket.getInputStream());
-	}
+		connectToServer();
+    }
+	    public void connectToServer() {
+	    	try {
+				socket = new Socket("localhost", 1234);
+				System.out.println("Client connected to " + socket.getPort());
+				objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+				objectInputStream = new ObjectInputStream(socket.getInputStream());
+				
+			}
+			catch(IOException e) {
+				e.printStackTrace();
+			}
+    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
