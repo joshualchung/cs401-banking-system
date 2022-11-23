@@ -137,17 +137,14 @@ public class Server {
 					// READ LOGIN OBJECT
 						// SEND SUCCESS LOGIN 
 						// SEND FAILED LOGIN
-				Customer test = customers.get("123456789");
-				System.out.println(test.getFirstName());
-				if (request.getType().equals(RequestType.CUSTOMER_LOGIN)) {
+				while (request.getType().equals(RequestType.CUSTOMER_LOGIN)) {
 					Login loginRequest = (Login)objectIn.readObject();
 					System.out.println(loginRequest.getPin());
 					String customerCard = loginRequest.getCardNum();
 					int customerPIN = loginRequest.getPin();
 					Customer customer = customers.get(customerCard);
-					System.out.println(customer.getFirstName());
 					
-					if (customer.getPin() == (customerPIN)) {
+					if (customer != null && customer.getPin() == (customerPIN)) {
 						request.setStatus(Status.SUCCESS);
 						System.out.println(request.getStatus());
 						objectOut.writeObject(request);
@@ -156,7 +153,7 @@ public class Server {
 						System.out.println(request.getStatus());
 						objectOut.writeObject(request);
 					}
-					
+					request = (Request)objectIn.readObject();
 				}
 				
 				// TELLER_LOGIN
