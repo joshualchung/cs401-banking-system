@@ -69,9 +69,8 @@ public class ATMGUI implements ActionListener{
 		frame.setSize(1000, 750);
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);  				//prevents frame from being resized 
-		frame.setUndecorated(true);   //remove the title bar
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//exits program 
-		frame.setBackground(Color.LIGHT_GRAY);
+		frame.setBackground(new Color(0x931D19));
 		
 		north.setPreferredSize(new Dimension(1000,125));
 		south.setPreferredSize(new Dimension(1000,125));
@@ -79,10 +78,10 @@ public class ATMGUI implements ActionListener{
 		west.setPreferredSize(new Dimension(225,750));
 		center.setPreferredSize(new Dimension(550,500));
 		
-		north.setBackground(Color.DARK_GRAY);
-		south.setBackground(Color.DARK_GRAY);
-		east.setBackground(Color.DARK_GRAY);
-		west.setBackground(Color.DARK_GRAY);
+		north.setBackground(new Color(0x931D19));
+		south.setBackground(new Color(0x931D19));
+		east.setBackground(new Color(0x931D19));
+		west.setBackground(new Color(0x931D19));
 		
 		frame.add(north,BorderLayout.NORTH);
 		frame.add(south,BorderLayout.SOUTH);
@@ -102,9 +101,9 @@ public class ATMGUI implements ActionListener{
 		subc.setPreferredSize(new Dimension(350,335));
 		
 		//set color of sub-panels
-		subn.setBackground(Color.LIGHT_GRAY);
-		subw.setBackground(Color.LIGHT_GRAY);
-		subc.setBackground(Color.LIGHT_GRAY);
+		subn.setBackground(new Color(0xBF2620));
+		subw.setBackground(new Color(0xBF2620));
+		subc.setBackground(new Color(0xBF2620));
 		
 		center.setLayout(new BorderLayout());
 		
@@ -163,7 +162,7 @@ public class ATMGUI implements ActionListener{
 						JOptionPane.showMessageDialog(
 			                    null, 
 			                    "Login Failed", 
-			                    "The user ID or password is incorrect. This is easily corrected by typing the correct user name and password.", 
+			                    "The user ID or password is incorrect.", 
 			                    JOptionPane.ERROR_MESSAGE);
 					}
 				}

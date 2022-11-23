@@ -45,7 +45,6 @@ public class BankTellerGUI implements ActionListener{
 		frame.setSize(1000, 750); 					//sets frame size
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);  				//prevents frame from being resized 
-		frame.setUndecorated(true);   //remove the title bar
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//exits program
 		frame.setBackground(Color.LIGHT_GRAY);
 		
@@ -56,10 +55,10 @@ public class BankTellerGUI implements ActionListener{
 		west.setPreferredSize(new Dimension(225,750));
 		center.setPreferredSize(new Dimension(550,500));
 		
-		north.setBackground(Color.DARK_GRAY);
-		south.setBackground(Color.DARK_GRAY);
-		east.setBackground(Color.DARK_GRAY);
-		west.setBackground(Color.DARK_GRAY);
+		north.setBackground(new Color(0x931D19));
+		south.setBackground(new Color(0x931D19));
+		east.setBackground(new Color(0x931D19));
+		west.setBackground(new Color(0x931D19));
 		
 		//add panels to frame
 		frame.add(north,BorderLayout.NORTH);
@@ -83,23 +82,26 @@ public class BankTellerGUI implements ActionListener{
 		bannerLabel.setText("Bank Teller System Login");
 		bannerLabel.setHorizontalAlignment(JLabel.CENTER);
 		bannerLabel.setFont(new Font("Ariel", Font.BOLD, 40));
+		bannerLabel.setForeground(Color.white);
 		
 		idLabel.setText("ID:");
 		idLabel.setFont(new Font("Arial", Font.BOLD, 12));
 		idLabel.setBounds(175, 90, 80, 25);
+		idLabel.setForeground(Color.white);
 		
 		passwordLabel.setText("Password:");
 		passwordLabel.setFont(new Font("Arial", Font.BOLD, 12));
 		passwordLabel.setBounds(130, 125, 80, 25);
+		passwordLabel.setForeground(Color.white);
 		
 		JPanel subn = new JPanel();
 		JPanel subw = new JPanel();
 		JPanel subc = new JPanel();
 		
 		//set color of sub-panels
-		subn.setBackground(Color.DARK_GRAY);
-		subw.setBackground(Color.DARK_GRAY);
-		subc.setBackground(Color.DARK_GRAY);
+		subn.setBackground(new Color(0xBF2620));
+		subw.setBackground(new Color(0xBF2620));
+		subc.setBackground(new Color(0xBF2620));
 		
 		center.setLayout(new BorderLayout());
 		
@@ -158,7 +160,7 @@ public class BankTellerGUI implements ActionListener{
 						JOptionPane.showMessageDialog(
 			                    null, 
 			                    "Login Failed", 
-			                    "The user ID or password is incorrect. This is easily corrected by typing the correct user name and password.", 
+			                    "The user ID or password is incorrect.", 
 			                    JOptionPane.ERROR_MESSAGE);
 					} else {
 						frame.dispose();
