@@ -4,13 +4,23 @@ import java.util.*;
 import java.util.regex.Pattern;
 public class Server {
 	private ServerSocket server = null;
+	
+	// card number : Customer
 	private static HashMap<String, Customer> customers = new HashMap<String, Customer>();
 	{
 		loadCustomers();
 	}
+	
+	// account number : Account
 	private static HashMap<Integer, Account> accounts = new HashMap<Integer, Account>();
 	{
 		loadAccounts();
+	}
+	
+	// teller user : teller password
+	private static HashMap<String, Teller> tellers = new HashMap<String, Teller>();
+	{
+		loadTellers();
 	}
 
 	public Server(int port) {
@@ -84,6 +94,25 @@ public class Server {
 			}
 			reader.close();
 			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	// tellers.txt
+	// teller user, teller password
+	public static void loadTellers() {
+		try {
+			File tellerData = new File("tellers.txt");
+			Scanner reader = new Scanner(tellerData);
+			reader.useDelimiter(Pattern.compile("[\\r\\n,]+"));
+			while (reader.hasNext()) {
+				String user = reader.next();
+				String password = reader.next();
+				Teller teller = new Teller(user, password);
+				tellers.put(user, teller);
+			}
+			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
