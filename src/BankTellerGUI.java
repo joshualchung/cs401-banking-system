@@ -132,44 +132,73 @@ public class BankTellerGUI implements ActionListener{
 		
 		frame.setVisible(true);
 		
-		socket = new Socket("localhost", 7777);
-		objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-		objectInputStream = new ObjectInputStream(socket.getInputStream());
+		connectToServer();
 	}
+	
+	public void connectToServer() {
+    	try {
+			socket = new Socket("localhost", 1234);
+			System.out.println("Client connected to " + socket.getPort());
+			objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+			objectInputStream = new ObjectInputStream(socket.getInputStream());
+			
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if(e.getSource() == login) {
-			String id = userID.getText();
+			@SuppressWarnings("deprecation")
+			String username = userID.getText();
 			String password = passwordText.getText();
-			Login login = new Login(id, password);
 			
 			//removes userId and password after pressing login button
 			userID.setText("");		
 			passwordText.setText("");			
 			
-			Request request = new loginRequest(login);
+			TellerLogin teller = new TellerLogin(username, password);
 			try {
-				objectOutputStream.writeObject(request);
-				loginRequest response = (loginRequest)objectInputStream.readObject();
+				// send customer login request
+				Request loginRequest = new Request(RequestType.TELLER_LOGIN);
+				objectOutputStream.writeObject(loginRequest);
+				objectOutputStream.flush();
+				objectOutputStream.writeObject(teller);
+				Request response = (Request)objectInputStream.readObject();
+				System.out.println(response.getStatus());
+				
 				if (response.getStatus() == Status.SUCCESS) {
-					if (response.getUser() instanceof Customer) {
-						JOptionPane.showMessageDialog(
-			                    null, 
-			                    "Login Failed", 
-			                    "The user ID or password is incorrect. This is easily corrected by typing the correct user name and password.", 
-			                    JOptionPane.ERROR_MESSAGE);
-					} else {
-						frame.dispose();
-						System.out.println(((loginRequest)response).getUser().getName());
-						BankTellerUserGUI usersignin = new BankTellerUserGUI(response);
-						socket.close();
-					}
+					frame.dispose();
+					System.out.println("Successful teller login responded");
+					// OptionATMGUI option = new OptionATMGUI((loginRequest)response);
+				} else {
+					JOptionPane.showMessageDialog(
+		                    null, 
+		                    "Login Failed", 
+		                    "The user ID or password is incorrect. This is easily corrected by typing the correct user name and password.", 
+		                    JOptionPane.ERROR_MESSAGE);
 				}
+
 			} catch (IOException | ClassNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+			} finally {
+				try {
+					if (objectInputStream != null) {
+						objectInputStream.close();
+					}
+					if (objectOutputStream != null) {
+						objectOutputStream.close();
+					}
+					if (socket != null) {
+						socket.close();
+					}
+				}
+				catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}

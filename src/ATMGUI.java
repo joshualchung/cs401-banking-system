@@ -173,7 +173,7 @@ public class ATMGUI implements ActionListener{
 				if (response.getStatus() == Status.SUCCESS) {
 					frame.dispose();
 					System.out.println("Successful login responded");
-					// OptionATMGUI option = new OptionATMGUI((loginRequest)response);
+					OptionATMGUI option = new OptionATMGUI(response);
 				} else {
 					JOptionPane.showMessageDialog(
 		                    null, 
@@ -185,6 +185,21 @@ public class ATMGUI implements ActionListener{
 			} catch (IOException | ClassNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+			} finally {
+				try {
+					if (objectInputStream != null) {
+						objectInputStream.close();
+					}
+					if (objectOutputStream != null) {
+						objectOutputStream.close();
+					}
+					if (socket != null) {
+						socket.close();
+					}
+				}
+				catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
