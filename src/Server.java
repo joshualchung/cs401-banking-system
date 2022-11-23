@@ -4,8 +4,15 @@ import java.util.*;
 import java.util.regex.Pattern;
 public class Server {
 	private ServerSocket server = null;
-	private HashMap<String, Customer> customers;	// card number to Customer
-	private HashMap<Integer, Account> accounts;		// account number to account
+	private static HashMap<String, Customer> customers = new HashMap<String, Customer>();
+	{
+		loadCustomers();
+	}
+	private static HashMap<Integer, Account> accounts = new HashMap<Integer, Account>();
+	{
+		loadAccounts();
+	}
+
 	public Server(int port) {
 		try {
 			server = new ServerSocket(port);
@@ -26,8 +33,6 @@ public class Server {
 		finally {
 			if (server != null) {
 				try {
-					// save customers/accounts back into file
-					save();
 					server.close();
 				}
 				catch (IOException e) {
@@ -39,7 +44,7 @@ public class Server {
 	
 	// customers.txt format
 	// first name, last name, card number, PIN, account numbers (checking/saving)
-	public void loadCustomers() {
+	public static void loadCustomers() {
 		try {
 			File customerData = new File("customers.txt");
 			Scanner reader = new Scanner(customerData);
@@ -66,7 +71,7 @@ public class Server {
 	// accounts.txt format
 	// account number, balance, history
 	// NO HISTORY YET
-	public void loadAccounts() {
+	public static void loadAccounts() {
 		try {
 			File accountData = new File("accounts.txt");
 			Scanner reader = new Scanner(accountData);
@@ -115,10 +120,10 @@ public class Server {
 	
 	private static class ClientHandler implements Runnable {
 		private final Socket clientSocket;
-		
 		public ClientHandler(Socket socket) {
 			this.clientSocket = socket;
 		}
+		
 		
 		public void run() {
 			ObjectInputStream objectIn = null;
@@ -127,15 +132,30 @@ public class Server {
 				objectOut = new ObjectOutputStream(clientSocket.getOutputStream());
 				objectIn = new ObjectInputStream(clientSocket.getInputStream());
 				Request request = (Request)objectIn.readObject();
-				
+				System.out.println(request.getStatus());
 				// READ CUSTOMER_LOGIN 
 					// READ LOGIN OBJECT
 						// SEND SUCCESS LOGIN 
 						// SEND FAILED LOGIN
+				Customer test = customers.get("123456789");
+				System.out.println(test.getFirstName());
 				if (request.getType().equals(RequestType.CUSTOMER_LOGIN)) {
 					Login loginRequest = (Login)objectIn.readObject();
+					System.out.println(loginRequest.getPin());
 					String customerCard = loginRequest.getCardNum();
 					int customerPIN = loginRequest.getPin();
+					Customer customer = customers.get(customerCard);
+					System.out.println(customer.getFirstName());
+					
+					if (customer.getPin() == (customerPIN)) {
+						request.setStatus(Status.SUCCESS);
+						System.out.println(request.getStatus());
+						objectOut.writeObject(request);
+					} else {
+						request.setStatus(Status.FAIL);
+						System.out.println(request.getStatus());
+						objectOut.writeObject(request);
+					}
 					
 				}
 				
