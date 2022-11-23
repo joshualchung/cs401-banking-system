@@ -176,6 +176,7 @@ public class Server {
 						request.setStatus(Status.SUCCESS);
 						System.out.println(request.getStatus());
 						objectOut.writeObject(request);
+						objectOut.writeObject(customer);
 					} else {
 						request.setStatus(Status.FAIL);
 						System.out.println(request.getStatus());
