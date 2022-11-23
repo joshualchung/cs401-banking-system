@@ -47,12 +47,14 @@ public class Server {
 			while (reader.hasNext()) {
 				String first = reader.next().toUpperCase();
 				String last = reader.next().toUpperCase();
-				int cardNum = Integer.parseInt(reader.next());
+				String cardNum = reader.next();
 				int PIN = Integer.parseInt(reader.next());
 				List<Integer> customerAccounts = new ArrayList<Integer>();
 				// customersAccounts[0] = checking, customerAccounts[1] = savings
 				customerAccounts.add(Integer.parseInt(reader.next()));
 				customerAccounts.add(Integer.parseInt(reader.next()));
+				Customer customer = new Customer(first, last, cardNum, PIN, customerAccounts);
+				customers.put(cardNum, customer);
 			}
 			reader.close();
 			
@@ -72,6 +74,8 @@ public class Server {
 			while (reader.hasNext()) {
 				int accNum = Integer.parseInt(reader.next());
 				double balance = Double.parseDouble(reader.next());
+				Account account = new Account(accNum, balance);
+				accounts.put(accNum, account);
 			}
 			reader.close();
 			
@@ -91,8 +95,8 @@ public class Server {
 						customer.getLastName(),
 						customer.getCardNum(),
 						customer.getPin(),
-						customer.getAccounts().get(0).getAccount(),
-						customer.getAccounts().get(1).getAccount()));
+						customer.getAccounts().get(0),
+						customer.getAccounts().get(1)));
 			}
 			for (Account account : accounts.values()) {
 				// write customer to file
@@ -122,11 +126,21 @@ public class Server {
 			try {
 				objectOut = new ObjectOutputStream(clientSocket.getOutputStream());
 				objectIn = new ObjectInputStream(clientSocket.getInputStream());
-				Login loginRequest = (Login)objectIn.readObject();
-
-				// verify card number with customer and PIN
-					// if correct open bank gui for card
-					// else send back incorrect user/password error
+				Request request = (Request)objectIn.readObject();
+				
+				// READ CUSTOMER_LOGIN 
+					// READ LOGIN OBJECT
+						// SEND SUCCESS LOGIN 
+						// SEND FAILED LOGIN
+				if (request.getType().equals(RequestType.CUSTOMER_LOGIN)) {
+					Login loginRequest = (Login)objectIn.readObject();
+					String customerCard = loginRequest.getCardNum();
+					int customerPIN = loginRequest.getPin();
+					
+				}
+				
+				// TELLER_LOGIN
+				
 				
 				
 			}
