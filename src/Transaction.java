@@ -1,24 +1,25 @@
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Transaction implements Serializable {
 	private String account;
 	private String target;				// transfer target (only for transfer requests)
 	private double amount;
 	private RequestType request;		// DEPOSIT, WITHDRAW, TRANSFER
-	private Date date;
+	private LocalDateTime date;
 	
-	// deposit/withdraw constructor
-	public Transaction(String account, double amount, RequestType request) {
-		date = new Date();
+	public Transaction(String account, String target, double amount, RequestType request) {
+		date = LocalDateTime.now();
+		
 		this.account = account;
+		this.target = target;
 		this.amount = amount;
 		this.request = request;
 	}
 	
-	// transfer transaction constructor
-	public Transaction(String account, String target, double amount, RequestType request) {
-		date = new Date();
+	// for loading transactions from file
+	public Transaction(String account, String target, double amount, RequestType request, LocalDateTime date) {
+		this.date = date;
 		this.account = account;
 		this.target = target;
 		this.amount = amount;
@@ -35,5 +36,13 @@ public class Transaction implements Serializable {
 	
 	public String getTarget() {
 		return target;
+	}
+	
+	public String getDate() {
+		return date.toString();
+	}
+	
+	public RequestType getRequest() {
+		return request;
 	}
 }

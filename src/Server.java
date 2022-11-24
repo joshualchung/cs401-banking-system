@@ -1,7 +1,13 @@
 import java.net.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.time.format.*;
+
 public class Server {
 	private ServerSocket server = null;
 	
@@ -21,6 +27,17 @@ public class Server {
 	private static HashMap<String, TellerLogin> tellers = new HashMap<String, TellerLogin>();
 	{
 		loadTellers();
+	}
+	
+	// account number : list of transactions
+	private static HashMap<String, List<Transaction>> transactions = new HashMap<String, List<Transaction>>();
+	{
+		try {
+			loadTransactions();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public Server(int port) {
@@ -119,13 +136,50 @@ public class Server {
 		}
 	}
 	
+	// transactions.txt
+	// account number, target, amount, request, date
+	public static void loadTransactions() throws ParseException {
+		try {
+			File transactionData = new File("transactions.txt");
+			Scanner reader = new Scanner(transactionData);
+			reader.useDelimiter(Pattern.compile("[\\r\\n,]+"));
+			DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+			while (reader.hasNext()) {
+				String account = reader.next();
+				String target = reader.next();
+				double amount = Double.parseDouble(reader.next());
+				RequestType request = RequestType.valueOf(reader.next());
+				LocalDateTime date = LocalDateTime.parse(reader.next(), dateFormatter);
+				Transaction transaction = new Transaction(account, target, amount, request, date);
+				addTransaction(account, transaction);
+			}
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public synchronized static void addTransaction(String account, Transaction transaction) {
+		List<Transaction> transactionList = transactions.get(account);
+		if (transactionList == null) {
+			transactionList = new ArrayList<Transaction>();
+			transactionList.add(transaction);
+			transactions.put(account,  transactionList);
+		} else {
+			transactionList.add(transaction);
+		}
+	}
+	
+	
 	public void save() {
 		try {
 			FileWriter accountsFile = new FileWriter("accounts.txt");
 			FileWriter customersFile = new FileWriter("customers.txt");
+			FileWriter tellersFile = new FileWriter("tellers.txt");
+			FileWriter transactionsFile = new FileWriter("transactions.txt");
 			for (Customer customer : customers.values()) {
 				// write customer to file
-				customersFile.write(String.format("%s,%s,%s,%o,%o,%o\n",
+				customersFile.write(String.format("%s,%s,%s,%o,%s,%s\n",
 						customer.getFirstName(),
 						customer.getLastName(),
 						customer.getCardNum(),
@@ -136,10 +190,25 @@ public class Server {
 			for (Account account : accounts.values()) {
 				// write customer to file
 				// HISTORY NOT INCLUDED YET. TO BE INCLUDED LATER
-				accountsFile.write(String.format("%o,%f\n",
+				accountsFile.write(String.format("%s,%,.2f\n",
 						account.getAccount(),
 						account.getBalance()));
 			}
+			for (TellerLogin teller : tellers.values()) {
+				tellersFile.write(String.format("%s,%s",
+						teller.getUsername(),
+						teller.getPassword()));
+			}
+			
+			
+//			for (Transaction transaction : transactions.values()) {
+//				transactionsFile.write(String.format("%s,%s,%,.2f,%s",
+//						transactions.getDate(),
+//						transactions.getAccount(),
+//						transactions.getTarget(),
+//						transactions.getAmount(),
+//						transactions.getRequest()));
+//			}
 			accountsFile.close();
 			customersFile.close();
 		} catch (Exception e) {
