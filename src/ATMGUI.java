@@ -187,22 +187,6 @@ public class ATMGUI implements ActionListener{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} 
-//				finally {
-//				try {
-//					if (objectInputStream != null) {
-//						objectInputStream.close();
-//					}
-//					if (objectOutputStream != null) {
-//						objectOutputStream.close();
-//					}
-//					if (socket != null) {
-//						socket.close();
-//					}
-//				}
-//				catch (IOException e1) {
-//					e1.printStackTrace();
-//				}
-//			}
 		}
 	}
 	

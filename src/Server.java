@@ -195,7 +195,13 @@ public class Server {
 																   		 customer.getAccounts().get(1));
 							objectOut.writeObject(customerAccounts.get(0));
 							objectOut.writeObject(customerAccounts.get(1));
+							
 							// handle requests (DEPOSIT/WITHDRAWAL/TRANSFER)
+							customerReq = (Request)objectIn.readObject();
+							// DEPOSIT
+								// RECEIVE TRANSACTION OBJECT
+								// UPDATE ACCOUNTS MAP
+								// UPDATE TRANSACTION MAP
 						}
 						
 					} else {
