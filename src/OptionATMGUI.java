@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class OptionATMGUI implements ActionListener{
+public class OptionATMGUI extends ATMGUI implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
 	private static JButton withdrawal = new JButton("Withdrawal");
@@ -46,14 +46,36 @@ public class OptionATMGUI implements ActionListener{
 	private static JPanel top = new JPanel();
 	private static JPanel buttons = new JPanel();
 	
+	private ATMGUI atmGUI;
 	private double amount = 0;
 	private int type = 0;
 	private String input = "";
 	private Customer customer;
+	private Account checkings;
+	private Account savings;
 	private int currentAccountPos;
-	public OptionATMGUI(Request response) throws IOException{
+	public OptionATMGUI(ATMGUI atmGUI) throws IOException{
+		this.atmGUI = atmGUI;
 //		this.customer = (Customer)response.getUser();
 //		this.accounts = login.getAccounts();
+		// send GETALLCUSTOMERACCOUNTS REQUEST
+		Request customerRequest = new Request(RequestType.GETALLCUSTOMERACCOUNTS);
+		atmGUI.objectOutputStream.writeObject(customerRequest);
+		try {
+			checkings = (Account)atmGUI.objectInputStream.readObject();
+			savings = (Account)atmGUI.objectInputStream.readObject();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		
+		System.out.println(checkings.getAccount());
+		
+		// receive checking
+		// receive savings
+		
 		currentAccountPos = 0;
 		
 		withdrawal.setBounds(100, 70, 300, 70);

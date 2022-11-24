@@ -12,7 +12,7 @@ public class Server {
 	}
 	
 	// account number : Account
-	private static HashMap<Integer, Account> accounts = new HashMap<Integer, Account>();
+	private static HashMap<String, Account> accounts = new HashMap<String, Account>();
 	{
 		loadAccounts();
 	}
@@ -64,10 +64,11 @@ public class Server {
 				String last = reader.next().toUpperCase();
 				String cardNum = reader.next();
 				int PIN = Integer.parseInt(reader.next());
-				List<Integer> customerAccounts = new ArrayList<Integer>();
+				List<String> customerAccounts = new ArrayList<String>();
 				// customersAccounts[0] = checking, customerAccounts[1] = savings
-				customerAccounts.add(Integer.parseInt(reader.next()));
-				customerAccounts.add(Integer.parseInt(reader.next()));
+				customerAccounts.add(reader.next());
+				customerAccounts.add(reader.next());
+				System.out.println(customerAccounts.get(0));
 				Customer customer = new Customer(first, last, cardNum, PIN, customerAccounts);
 				customers.put(cardNum, customer);
 			}
@@ -87,7 +88,7 @@ public class Server {
 			Scanner reader = new Scanner(accountData);
 			reader.useDelimiter(Pattern.compile("[\\r\\n,]+"));
 			while (reader.hasNext()) {
-				int accNum = Integer.parseInt(reader.next());
+				String accNum = reader.next();
 				double balance = Double.parseDouble(reader.next());
 				Account account = new Account(accNum, balance);
 				accounts.put(accNum, account);
@@ -153,6 +154,13 @@ public class Server {
 			this.clientSocket = socket;
 		}
 		
+		public List<Account> getAccounts(String checkings, String savings) {
+			List<Account> customerAccounts = new ArrayList();
+			customerAccounts.add(accounts.get(checkings));
+			customerAccounts.add(accounts.get(savings));
+			return customerAccounts;
+			
+		}
 		
 		public void run() {
 			ObjectInputStream objectIn = null;
@@ -177,6 +185,19 @@ public class Server {
 						System.out.println(request.getStatus());
 						objectOut.writeObject(request);
 						objectOut.writeObject(customer);
+						
+						// while handling customer actions
+							// change request type to logout and break
+						Request customerReq = (Request)objectIn.readObject();
+						System.out.println(customerReq.getType());
+						while (!customerReq.getType().equals(RequestType.LOGOUT)) {
+							List<Account> customerAccounts = getAccounts(customer.getAccounts().get(0), 
+																   		 customer.getAccounts().get(1));
+							objectOut.writeObject(customerAccounts.get(0));
+							objectOut.writeObject(customerAccounts.get(1));
+							// handle requests (DEPOSIT/WITHDRAWAL/TRANSFER)
+						}
+						
 					} else {
 						request.setStatus(Status.FAIL);
 						System.out.println(request.getStatus());
