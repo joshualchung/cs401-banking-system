@@ -1,12 +1,10 @@
 import java.net.*;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.time.format.*;
 
 public class Server {
 	private ServerSocket server = null;
@@ -45,8 +43,7 @@ public class Server {
 			server = new ServerSocket(port);
 			server.setReuseAddress(true);
 			System.out.println("Server started");
-			loadCustomers();
-			loadAccounts();
+			
 			while (true) {
 				Socket client = server.accept();
 				
@@ -85,7 +82,6 @@ public class Server {
 				// customersAccounts[0] = checking, customerAccounts[1] = savings
 				customerAccounts.add(reader.next());
 				customerAccounts.add(reader.next());
-				System.out.println(customerAccounts.get(0));
 				Customer customer = new Customer(first, last, cardNum, PIN, customerAccounts);
 				customers.put(cardNum, customer);
 			}
@@ -97,8 +93,7 @@ public class Server {
 	}
 	
 	// accounts.txt format
-	// account number, balance, history
-	// NO HISTORY YET
+	// account number, balance
 	public static void loadAccounts() {
 		try {
 			File accountData = new File("accounts.txt");

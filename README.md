@@ -1,12 +1,17 @@
 # cs401-banking-system
 
 ## TODO NOW
-- connect login gui to client
-- add Register class and add option to client
+- add register option to atmgui
+- handle CREATECUSTOMER request
+- handle LOGOUT request
+- handle DEPOSIT/WITHDRAW/TRANSFER requests
 
 ## TODO LATER
-- add bank teller logic (file storage, login, teller class)
-- add transaction class and transaction history feature
+- add transaction history option
+- test customer/teller login
+- test customer atm actions
+- test teller atm actions
+- test teller account management actions
 
 ## Initial program start
 Server loads customers, accounts, and account histories from file.
@@ -25,28 +30,3 @@ Server loads customers, accounts, and account histories from file.
 	
 Account history option  
 	- returns account transactions
-
-
-### Customer class
-first name
-last name
-card number (9 digits)
-pin
-accounts (checking/saving)
-
-### Account class
-number	(9 digits)  
-balance  
-history of transactions  
-
-### Transaction
-date  
-action  
-current account  
-target  
-
-### Register class
-first name  
-last name  
-generated account numbers (UNIQUE ID UUID)  
-pin  
