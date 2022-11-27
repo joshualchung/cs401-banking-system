@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class OptionATMGUI extends ATMGUI implements ActionListener{
 	
@@ -46,7 +47,6 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 	private static JPanel top = new JPanel();
 	private static JPanel buttons = new JPanel();
 	
-	private ATMGUI atmGUI;
 	private double amount = 0;
 	private int type = 0;
 	private String input = "";
@@ -54,16 +54,16 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 	private Account checkings;
 	private Account savings;
 	private int currentAccountPos;
-	public OptionATMGUI(ATMGUI atmGUI) throws IOException{
-		this.atmGUI = atmGUI;
-//		this.customer = (Customer)response.getUser();
-//		this.accounts = login.getAccounts();
-		// send GETALLCUSTOMERACCOUNTS REQUEST
+	public OptionATMGUI(ObjectInputStream objectInputStream, 
+						ObjectOutputStream objectOutputStream, 
+						Customer customer) throws IOException{
+		
 		Request customerRequest = new Request(RequestType.GETALLCUSTOMERACCOUNTS);
-		atmGUI.objectOutputStream.writeObject(customerRequest);
+		
+		objectOutputStream.writeObject(customerRequest);
 		try {
-			checkings = (Account)atmGUI.objectInputStream.readObject();
-			savings = (Account)atmGUI.objectInputStream.readObject();
+			checkings = (Account)objectInputStream.readObject();
+			savings = (Account)objectInputStream.readObject();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -83,7 +83,93 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 		withdrawal.setForeground(Color.WHITE);
 		withdrawal.setFont(new Font("Arial", Font.PLAIN, 25));
 		withdrawal.setFocusable(false);
-		withdrawal.addActionListener(this);
+		withdrawal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				double withdrawAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
+				// check valid amount
+				checkings.setBalance(checkings.getBalance() - withdrawAmount);
+				// send withdraw Request
+				try {
+					Request withdrawRequest = new Request(RequestType.WITHDRAW);
+					objectOutputStream.writeObject(withdrawRequest);
+					Transaction withdrawal = new Transaction(checkings.getAccount(),
+															 checkings.getAccount(),
+															 withdrawAmount,
+															 RequestType.WITHDRAW);
+					objectOutputStream.writeObject(withdrawal);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				// send Transaction
+				// send updated Account
+				label2.setText("Checking: $" + checkings.getBalance());	
+			}
+		});
+		
+		deposit.setBounds(100,210,300,70);
+		deposit.setBackground(new Color(0x4cbfff));
+		deposit.setForeground(Color.WHITE);
+		deposit.setFont(new Font("Arial", Font.PLAIN, 25));
+		deposit.setFocusable(false);
+		deposit.addActionListener(this);
+		
+		deposit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				double depositAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
+				// check valid amount
+				checkings.setBalance(checkings.getBalance() + depositAmount);
+				// send withdraw Request
+				try {
+					Request depositRequest = new Request(RequestType.DEPOSIT);
+					objectOutputStream.writeObject(depositRequest);
+					Transaction deposit = new Transaction(checkings.getAccount(),
+														  checkings.getAccount(),
+														  depositAmount,
+														  RequestType.DEPOSIT);
+					objectOutputStream.writeObject(deposit);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				// send Transaction
+				// send updated Account
+				label2.setText("Checking: $" + checkings.getBalance());	
+			}
+		});
+		
+		transfer.setBounds(100,350,300,70);
+		transfer.setBackground(new Color(0x4cbfff));
+		transfer.setForeground(Color.WHITE);
+		transfer.setFont(new Font("Futura", Font.PLAIN, 25));
+		transfer.setFocusable(false);
+		transfer.addActionListener(this);
+		
+		
+		cancel.setBounds(100,350,300,70);
+		cancel.setBackground(Color.RED);
+		cancel.setForeground(Color.WHITE);
+		cancel.setFont(new Font("Arial", Font.PLAIN, 25));
+		cancel.setFocusable(false);
+		cancel.addActionListener(this);
+		
+		label1.setText("Welcome");
+		label1.setBounds(150, 50, 500, 25);
+		label1.setBackground(Color.white);
+		label1.setFont(new Font("Arial", Font.BOLD, 40));
+		
+		label2.setText("Checking: $" + checkings.getBalance());					//insert account 1 name and money amount here
+		label2.setBounds(50,100,200,25);
+		label2.setForeground(Color.white);
+		label2.setFont(new Font("Arial", Font.BOLD, 15));
+		
+		label3.setText("Savings $" + savings.getBalance());					//insert account 2 name and money amount here
+		label3.setBounds(400,100,200,25);
+		label3.setForeground(Color.white);
+		label3.setFont(new Font("Arial", Font.BOLD, 15));
+		
+		label4.setText("Current: ");
+		label4.setBounds(50,50,200,25);
+		label4.setForeground(Color.orange);
+		label4.setFont(new Font("Arial", Font.BOLD, 15));
 		
 		frame.setSize(1000, 750);
 		frame.setLayout(new BorderLayout());
@@ -125,8 +211,8 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 		east.add(cancel);
 		
 		frame.setVisible(true);
-		
 	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub

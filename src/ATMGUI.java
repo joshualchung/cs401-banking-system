@@ -174,7 +174,8 @@ public class ATMGUI implements ActionListener{
 					frame.dispose();
 					System.out.println("Successful login responded");
 					Customer customer = (Customer)objectInputStream.readObject();
-					OptionATMGUI option = new OptionATMGUI(this);
+					OptionATMGUI option = new OptionATMGUI(objectInputStream, objectOutputStream, customer);
+					
 				} else {
 					JOptionPane.showMessageDialog(
 		                    null, 
