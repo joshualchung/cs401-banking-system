@@ -172,12 +172,13 @@ public class BankTellerGUI implements ActionListener{
 				if (response.getStatus() == Status.SUCCESS) {
 					frame.dispose();
 					System.out.println("Successful teller login responded");
-					 OptionATMGUI option = new OptionATMGUI(response);
+					Teller customer = (Customer)objectInputStream.readObject();
+					BankTellerUserGUI option = new BankTellerUserGUI(this);
 				} else {
 					JOptionPane.showMessageDialog(
 		                    null, 
 		                    "Login Failed", 
-		                    "The user ID or password is incorrect. This is easily corrected by typing the correct user name and password.", 
+		                    "The user ID or password is incorrect.", 
 		                    JOptionPane.ERROR_MESSAGE);
 				}
 
