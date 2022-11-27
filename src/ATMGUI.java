@@ -71,6 +71,8 @@ public class ATMGUI implements ActionListener{
 		frame.setSize(1000, 750);
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);  				//prevents frame from being resized 
+
+		frame.setUndecorated(true);   //remove the title bar
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//exits program 
 		frame.setBackground(Color.LIGHT_GRAY);
 		
@@ -173,7 +175,9 @@ public class ATMGUI implements ActionListener{
 					frame.dispose();
 					System.out.println("Successful login responded");
 					Customer customer = (Customer)objectInputStream.readObject();
-					OptionATMGUI option = new OptionATMGUI(this);
+
+					OptionATMGUI option = new OptionATMGUI(objectInputStream, objectOutputStream, customer);
+
 				} else {
 					JOptionPane.showMessageDialog(
 		                    null, 
@@ -186,22 +190,6 @@ public class ATMGUI implements ActionListener{
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} 
-//				finally {
-//				try {
-//					if (objectInputStream != null) {
-//						objectInputStream.close();
-//					}
-//					if (objectOutputStream != null) {
-//						objectOutputStream.close();
-//					}
-//					if (socket != null) {
-//						socket.close();
-//					}
-//				}
-//				catch (IOException e1) {
-//					e1.printStackTrace();
-//				}
-//			}
 		}
 	}
 	

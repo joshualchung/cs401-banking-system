@@ -285,6 +285,7 @@ public class Server {
 								System.out.println(accounts.get(transfer.getAccount()).getBalance());
 							
 						}
+
 						}
 						
 					} else {

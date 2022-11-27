@@ -19,9 +19,13 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import javax.swing.SwingUtilities;
+
+
 public class OptionATMGUI extends ATMGUI implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
+
 	private static JButton withdrawalChecking = new JButton("Withdrawal Checking");
 	private static JButton depositChecking = new JButton("Deposit Checking");
 	private static JButton withdrawalSaving = new JButton("Withdrawal Saving");
@@ -30,6 +34,7 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 	private static JButton transferSaveToCheck = new JButton("Transfer Checking to Saving");
 	private static JButton switchAcc = new JButton("Switch Accounts");
 	private static JButton logout = new JButton("Logout");
+
 	
 	private static JPanel north = new JPanel();
 	private static JPanel east = new JPanel();
@@ -49,7 +54,6 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 	private static JPanel top = new JPanel();
 	private static JPanel buttons = new JPanel();
 	
-	private ATMGUI atmGUI;
 	private double amount = 0;
 	private int type = 0;
 	private String input = "";
@@ -57,16 +61,17 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 	private Account checkings;
 	private Account savings;
 	private int currentAccountPos;
-	public OptionATMGUI(ATMGUI atmGUI) throws IOException{
-		this.atmGUI = atmGUI;
-//		this.customer = (Customer)response.getUser();
-//		this.accounts = login.getAccounts();
-		// send GETALLCUSTOMERACCOUNTS REQUEST
+  
+	public OptionATMGUI(ObjectInputStream objectInputStream, 
+						ObjectOutputStream objectOutputStream, 
+						Customer customer) throws IOException{
+		
 		Request customerRequest = new Request(RequestType.GETALLCUSTOMERACCOUNTS);
-		atmGUI.objectOutputStream.writeObject(customerRequest);
+		
+		objectOutputStream.writeObject(customerRequest);
 		try {
-			checkings = (Account)atmGUI.objectInputStream.readObject();
-			savings = (Account)atmGUI.objectInputStream.readObject();
+			checkings = (Account)objectInputStream.readObject();
+			savings = (Account)objectInputStream.readObject();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -81,12 +86,14 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 		
 		currentAccountPos = 0;
 		
+
 		withdrawalChecking.setBounds(100, 40, 250, 70);
 		withdrawalChecking.setBackground(new Color(0xBF2620));
 		withdrawalChecking.setForeground(Color.WHITE);
 		withdrawalChecking.setFont(new Font("Arial", Font.PLAIN, 15));
 		withdrawalChecking.setFocusable(false);
 		withdrawalChecking.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 				double withdrawAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
 				// check valid amount
@@ -143,6 +150,7 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 		depositChecking.setFont(new Font("Arial", Font.PLAIN, 15));
 		depositChecking.setFocusable(false);
 		depositChecking.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 				double depositAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
 				// check valid amount
@@ -155,6 +163,7 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 															 checkings.getAccount(),
 															 depositAmount,
 															 RequestType.DEPOSIT);
+
 					objectOutputStream.writeObject(deposit);
 				} catch (IOException e1) {
 					e1.printStackTrace();
@@ -342,11 +351,11 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 		frame.setVisible(true);
 		
 	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 	
-
 }
