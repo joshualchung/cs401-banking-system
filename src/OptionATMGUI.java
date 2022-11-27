@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class OptionATMGUI implements ActionListener{
+public class OptionATMGUI extends ATMGUI implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
 	private static JButton withdrawal = new JButton("Withdrawal");
@@ -46,14 +46,36 @@ public class OptionATMGUI implements ActionListener{
 	private static JPanel top = new JPanel();
 	private static JPanel buttons = new JPanel();
 	
+	private ATMGUI atmGUI;
 	private double amount = 0;
 	private int type = 0;
 	private String input = "";
 	private Customer customer;
+	private Account checkings;
+	private Account savings;
 	private int currentAccountPos;
-	public OptionATMGUI(Request response) throws IOException{
-		this.customer = (Customer)response.getUser();
+	public OptionATMGUI(ATMGUI atmGUI) throws IOException{
+		this.atmGUI = atmGUI;
+//		this.customer = (Customer)response.getUser();
 //		this.accounts = login.getAccounts();
+		// send GETALLCUSTOMERACCOUNTS REQUEST
+		Request customerRequest = new Request(RequestType.GETALLCUSTOMERACCOUNTS);
+		atmGUI.objectOutputStream.writeObject(customerRequest);
+		try {
+			checkings = (Account)atmGUI.objectInputStream.readObject();
+			savings = (Account)atmGUI.objectInputStream.readObject();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		
+		System.out.println(checkings.getAccount());
+		
+		// receive checking
+		// receive savings
+		
 		currentAccountPos = 0;
 		
 		withdrawal.setBounds(100, 70, 300, 70);
@@ -61,7 +83,55 @@ public class OptionATMGUI implements ActionListener{
 		withdrawal.setForeground(Color.WHITE);
 		withdrawal.setFont(new Font("Arial", Font.PLAIN, 25));
 		withdrawal.setFocusable(false);
-		withdrawal.addActionListener(this);
+		withdrawal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				double withdrawAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
+				try {
+					checkings.
+				}
+			}
+		});
+		
+		deposit.setBounds(100,210,300,70);
+		deposit.setBackground(new Color(0x4cbfff));
+		deposit.setForeground(Color.WHITE);
+		deposit.setFont(new Font("Arial", Font.PLAIN, 25));
+		deposit.setFocusable(false);
+		deposit.addActionListener(this);
+		
+		transfer.setBounds(100,350,300,70);
+		transfer.setBackground(new Color(0x4cbfff));
+		transfer.setForeground(Color.WHITE);
+		transfer.setFont(new Font("Futura", Font.PLAIN, 25));
+		transfer.setFocusable(false);
+		transfer.addActionListener(this);
+		
+		cancel.setBounds(100,350,300,70);
+		cancel.setBackground(Color.RED);
+		cancel.setForeground(Color.WHITE);
+		cancel.setFont(new Font("Arial", Font.PLAIN, 25));
+		cancel.setFocusable(false);
+		cancel.addActionListener(this);
+		
+		label1.setText("Welcome");
+		label1.setBounds(150, 50, 500, 25);
+		label1.setBackground(Color.white);
+		label1.setFont(new Font("Arial", Font.BOLD, 40));
+		
+		label2.setText("Checking: $" + checkings.getBalance());					//insert account 1 name and money amount here
+		label2.setBounds(50,100,200,25);
+		label2.setForeground(Color.white);
+		label2.setFont(new Font("Arial", Font.BOLD, 15));
+		
+		label3.setText("Savings $" + savings.getBalance());					//insert account 2 name and money amount here
+		label3.setBounds(400,100,200,25);
+		label3.setForeground(Color.white);
+		label3.setFont(new Font("Arial", Font.BOLD, 15));
+		
+		label4.setText("Current: ");
+		label4.setBounds(50,50,200,25);
+		label4.setForeground(Color.orange);
+		label4.setFont(new Font("Arial", Font.BOLD, 15));
 		
 		frame.setSize(1000, 750);
 		frame.setLayout(new BorderLayout());
@@ -103,6 +173,11 @@ public class OptionATMGUI implements ActionListener{
 		east.add(cancel);
 		
 		frame.setVisible(true);
+		
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 	

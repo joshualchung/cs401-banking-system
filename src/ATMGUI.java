@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -34,11 +35,12 @@ public class ATMGUI implements ActionListener{
 	JTextField cardNumber;
 	JPasswordField userPIN;
 	
-	protected Socket socket;
+	protected Socket socket = null;
 	protected ObjectOutputStream objectOutputStream;
-    protected ObjectInputStream objectInputStream;
+	protected ObjectInputStream objectInputStream;
     
     public ATMGUI() throws IOException{
+    	
     	login.setBounds(115, 200, 65, 25);
     	login.setFocusable(false);
     	login.addActionListener(this);
@@ -70,7 +72,7 @@ public class ATMGUI implements ActionListener{
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);  				//prevents frame from being resized 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//exits program 
-		frame.setBackground(new Color(0x931D19));
+		frame.setBackground(Color.LIGHT_GRAY);
 		
 		north.setPreferredSize(new Dimension(1000,125));
 		south.setPreferredSize(new Dimension(1000,125));
@@ -78,10 +80,10 @@ public class ATMGUI implements ActionListener{
 		west.setPreferredSize(new Dimension(225,750));
 		center.setPreferredSize(new Dimension(550,500));
 		
-		north.setBackground(new Color(0x931D19));
-		south.setBackground(new Color(0x931D19));
-		east.setBackground(new Color(0x931D19));
-		west.setBackground(new Color(0x931D19));
+		north.setBackground(Color.DARK_GRAY);
+		south.setBackground(Color.DARK_GRAY);
+		east.setBackground(Color.DARK_GRAY);
+		west.setBackground(Color.DARK_GRAY);
 		
 		frame.add(north,BorderLayout.NORTH);
 		frame.add(south,BorderLayout.SOUTH);
@@ -101,9 +103,9 @@ public class ATMGUI implements ActionListener{
 		subc.setPreferredSize(new Dimension(350,335));
 		
 		//set color of sub-panels
-		subn.setBackground(new Color(0xBF2620));
-		subw.setBackground(new Color(0xBF2620));
-		subc.setBackground(new Color(0xBF2620));
+		subn.setBackground(Color.LIGHT_GRAY);
+		subw.setBackground(Color.LIGHT_GRAY);
+		subc.setBackground(Color.LIGHT_GRAY);
 		
 		center.setLayout(new BorderLayout());
 		
@@ -132,67 +134,85 @@ public class ATMGUI implements ActionListener{
 		frame.setVisible(true);	//makes frame visible
 		connectToServer();
     }
-	    public void connectToServer() {
-	    	try {
-				socket = new Socket("localhost", 1234);
-				System.out.println("Client connected to " + socket.getPort());
-				objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-				objectInputStream = new ObjectInputStream(socket.getInputStream());
-				
-			}
-			catch(IOException e) {
-				e.printStackTrace();
-			}
+    
+    public void connectToServer() {
+    	try {
+			socket = new Socket("localhost", 1234);
+			System.out.println("Client connected to " + socket.getPort());
+			objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+			objectInputStream = new ObjectInputStream(socket.getInputStream());
+			
+		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
     }
     
-	    @Override
-		public void actionPerformed(ActionEvent e) {
-			if(e.getSource() == login) {
-				@SuppressWarnings("deprecation")
-				int pin = Integer.parseInt(userPIN.getText());
-				String cardNum = cardNumber.getText();
-				
-				//removes userId and password after pressing login button
-				cardNumber.setText("");		
-				userPIN.setText("");			
-				
-				Login customerLogin = new Login(cardNum, pin);
-				try {
-					// send customer login request
-					Request loginRequest = new Request(RequestType.CUSTOMER_LOGIN);
-					objectOutputStream.writeObject(loginRequest);
-					objectOutputStream.flush();
-					objectOutputStream.writeObject(customerLogin);
-					Request response = (Request)objectInputStream.readObject();
-					System.out.println(response.getStatus());
-					
-					if (response.getStatus() == Status.SUCCESS) {
-						frame.dispose();
-						System.out.println("Successful login responded");
-						OptionATMGUI option = new OptionATMGUI(response);
-					} else {
-						JOptionPane.showMessageDialog(
-			                    null, 
-			                    "Login Failed", 
-			                    "The user ID or password is incorrect. This is easily corrected by typing the correct user name and password.", 
-			                    JOptionPane.ERROR_MESSAGE);
-					}
-
-				} catch (IOException | ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		}
-		
-		public static void main(String[] args) throws ClassNotFoundException {
+    @Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == login) {
+			@SuppressWarnings("deprecation")
+			int pin = Integer.parseInt(userPIN.getText());
+			String cardNum = cardNumber.getText();
 			
+			//removes userId and password after pressing login button
+			cardNumber.setText("");		
+			userPIN.setText("");			
+			
+			Login customerLogin = new Login(cardNum, pin);
 			try {
-				ATMGUI gui = new ATMGUI();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				// send customer login request
+				Request loginRequest = new Request(RequestType.CUSTOMER_LOGIN);
+				objectOutputStream.writeObject(loginRequest);
+				objectOutputStream.flush();
+				objectOutputStream.writeObject(customerLogin);
+				Request response = (Request)objectInputStream.readObject();
+				System.out.println(response.getStatus());
+				
+				if (response.getStatus() == Status.SUCCESS) {
+					frame.dispose();
+					System.out.println("Successful login responded");
+					Customer customer = (Customer)objectInputStream.readObject();
+					OptionATMGUI option = new OptionATMGUI(this);
+				} else {
+					JOptionPane.showMessageDialog(
+		                    null, 
+		                    "Login Failed", 
+		                    "The user ID or password is incorrect. This is easily corrected by typing the correct user name and password.", 
+		                    JOptionPane.ERROR_MESSAGE);
+				}
 
+			} catch (IOException | ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+//				finally {
+//				try {
+//					if (objectInputStream != null) {
+//						objectInputStream.close();
+//					}
+//					if (objectOutputStream != null) {
+//						objectOutputStream.close();
+//					}
+//					if (socket != null) {
+//						socket.close();
+//					}
+//				}
+//				catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
+//			}
 		}
 	}
+	
+	public static void main(String[] args) throws ClassNotFoundException {
+		
+		try {
+			ATMGUI gui = new ATMGUI();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+}

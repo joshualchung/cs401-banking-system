@@ -1,14 +1,14 @@
-
+import java.io.Serializable;
 import java.util.List;
 
-public class Customer {
+public class Customer implements Serializable{
 	private String firstName;
 	private String lastName;
 	private String cardNum;
 	private int pin;
-	private List<Integer> accounts;			// [0] checking, [1] saving
+	private List<String> accounts;			// [0] checking, [1] saving
 	
-	public Customer(String firstName, String lastName, String cardNum, int pin, List<Integer> accounts) {
+	public Customer(String firstName, String lastName, String cardNum, int pin, List<String> accounts) {
 		setFirst(firstName);
 		setLast(lastName);
 		setCard(cardNum);
@@ -32,7 +32,7 @@ public class Customer {
 		this.pin = pin;
 	}
 	
-	public void setAccounts(List<Integer> accounts) { 
+	public void setAccounts(List<String> accounts) { 
 		this.accounts = accounts;
 	}
 	
@@ -44,7 +44,7 @@ public class Customer {
 		return lastName;
 	}
 	
-	public List<Integer> getAccounts() {
+	public List<String> getAccounts() {
 		return accounts;
 	}
 	
