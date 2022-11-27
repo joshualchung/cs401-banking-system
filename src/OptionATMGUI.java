@@ -96,27 +96,35 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				double withdrawAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
 				// check valid amount
-				checkings.setBalance(checkings.getBalance() - withdrawAmount);
-				// send withdraw Request
-				try {
-					Request withdrawRequest = new Request(RequestType.WITHDRAW);
-					objectOutputStream.writeObject(withdrawRequest);
-					Transaction withdrawal = new Transaction(checkings.getAccount(),
-															 checkings.getAccount(),
-															 withdrawAmount,
-															 RequestType.WITHDRAW);
-					objectOutputStream.writeObject(withdrawal);
-					checkings = (Account)objectInputStream.readObject();
-					savings = (Account)objectInputStream.readObject();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if (withdrawAmount > checkings.getBalance()) {
+					JOptionPane.showMessageDialog(
+		                    null, 
+		                    "Insufficient Funds", 
+		                    "Enter valid amount", 
+		                    JOptionPane.ERROR_MESSAGE);
+				} else {
+					checkings.setBalance(checkings.getBalance() - withdrawAmount);
+					// send withdraw Request
+					try {
+						Request withdrawRequest = new Request(RequestType.WITHDRAW);
+						objectOutputStream.writeObject(withdrawRequest);
+						Transaction withdrawal = new Transaction(checkings.getAccount(),
+																 checkings.getAccount(),
+																 withdrawAmount,
+																 RequestType.WITHDRAW);
+						objectOutputStream.writeObject(withdrawal);
+						checkings = (Account)objectInputStream.readObject();
+						savings = (Account)objectInputStream.readObject();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					// send Transaction
+					// send updated Account
+					label2.setText("Checking: $" + checkings.getBalance());	
 				}
-				// send Transaction
-				// send updated Account
-				label2.setText("Checking: $" + checkings.getBalance());	
 			}
 		});
 		
@@ -129,27 +137,35 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				double withdrawAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
 				// check valid amount
-				savings.setBalance(savings.getBalance() - withdrawAmount);
-				// send withdraw Request
-				try {
-					Request withdrawRequest = new Request(RequestType.WITHDRAW);
-					objectOutputStream.writeObject(withdrawRequest);
-					Transaction withdrawal = new Transaction(savings.getAccount(),
-															 savings.getAccount(),
-															 withdrawAmount,
-															 RequestType.WITHDRAW);
-					objectOutputStream.writeObject(withdrawal);
-					checkings = (Account)objectInputStream.readObject();
-					savings = (Account)objectInputStream.readObject();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if (withdrawAmount > checkings.getBalance()) {
+					JOptionPane.showMessageDialog(
+		                    null, 
+		                    "Insufficient Funds", 
+		                    "Enter valid amount", 
+		                    JOptionPane.ERROR_MESSAGE);
+				} else {
+					savings.setBalance(savings.getBalance() - withdrawAmount);
+					// send withdraw Request
+					try {
+						Request withdrawRequest = new Request(RequestType.WITHDRAW);
+						objectOutputStream.writeObject(withdrawRequest);
+						Transaction withdrawal = new Transaction(savings.getAccount(),
+																 savings.getAccount(),
+																 withdrawAmount,
+																 RequestType.WITHDRAW);
+						objectOutputStream.writeObject(withdrawal);
+						checkings = (Account)objectInputStream.readObject();
+						savings = (Account)objectInputStream.readObject();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					// send Transaction
+					// send updated Account
+					label3.setText("Saving: $" + savings.getBalance());	
 				}
-				// send Transaction
-				// send updated Account
-				label3.setText("Saving: $" + savings.getBalance());	
 			}
 		});
 		
@@ -163,28 +179,36 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				double depositAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
 				// check valid amount
-				checkings.setBalance(checkings.getBalance() + depositAmount);
-				// send withdraw Request
-				try {
-					Request depositRequest = new Request(RequestType.DEPOSIT);
-					objectOutputStream.writeObject(depositRequest);
-					Transaction deposit = new Transaction(checkings.getAccount(),
-															 checkings.getAccount(),
-															 depositAmount,
-															 RequestType.DEPOSIT);
+				if (depositAmount > checkings.getBalance()) {
+					JOptionPane.showMessageDialog(
+		                    null, 
+		                    "Insufficient Funds", 
+		                    "Enter valid amount", 
+		                    JOptionPane.ERROR_MESSAGE);
+				} else {
+					checkings.setBalance(checkings.getBalance() + depositAmount);
+					// send withdraw Request
+					try {
+						Request depositRequest = new Request(RequestType.DEPOSIT);
+						objectOutputStream.writeObject(depositRequest);
+						Transaction deposit = new Transaction(checkings.getAccount(),
+																 checkings.getAccount(),
+																 depositAmount,
+																 RequestType.DEPOSIT);
 
-					objectOutputStream.writeObject(deposit);
-					checkings = (Account)objectInputStream.readObject();
-					savings = (Account)objectInputStream.readObject();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+						objectOutputStream.writeObject(deposit);
+						checkings = (Account)objectInputStream.readObject();
+						savings = (Account)objectInputStream.readObject();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					// send Transaction
+					// send updated Account
+					label2.setText("Checking: $" + checkings.getBalance());	
 				}
-				// send Transaction
-				// send updated Account
-				label2.setText("Checking: $" + checkings.getBalance());	
 			}
 		});
 		
@@ -197,27 +221,35 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				double depositAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
 				// check valid amount
-				savings.setBalance(savings.getBalance() + depositAmount);
-				// send withdraw Request
-				try {
-					Request depositRequest = new Request(RequestType.DEPOSIT);
-					objectOutputStream.writeObject(depositRequest);
-					Transaction deposit = new Transaction(savings.getAccount(),
-															 savings.getAccount(),
-															 depositAmount,
-															 RequestType.DEPOSIT);
-					objectOutputStream.writeObject(deposit);
-					checkings = (Account)objectInputStream.readObject();
-					savings = (Account)objectInputStream.readObject();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				// send Transaction
-				// send updated Account
-				label3.setText("Savings: $" + savings.getBalance());	
+				if (depositAmount > checkings.getBalance()) {
+					JOptionPane.showMessageDialog(
+		                    null, 
+		                    "Insufficient Funds", 
+		                    "Enter valid amount", 
+		                    JOptionPane.ERROR_MESSAGE);
+				} else {
+					savings.setBalance(savings.getBalance() + depositAmount);
+					// send withdraw Request
+					try {
+						Request depositRequest = new Request(RequestType.DEPOSIT);
+						objectOutputStream.writeObject(depositRequest);
+						Transaction deposit = new Transaction(savings.getAccount(),
+																 savings.getAccount(),
+																 depositAmount,
+																 RequestType.DEPOSIT);
+						objectOutputStream.writeObject(deposit);
+						checkings = (Account)objectInputStream.readObject();
+						savings = (Account)objectInputStream.readObject();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					// send Transaction
+					// send updated Account
+					label3.setText("Savings: $" + savings.getBalance());
+				}	
 			}
 		});
 		
@@ -230,29 +262,38 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				double transAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
 				// check valid amount
-				checkings.setBalance(checkings.getBalance() - transAmount);
-				savings.setBalance(savings.getBalance() + transAmount);
-				
-				// send withdraw Request
-				try {
-					Request transRequest = new Request(RequestType.TRANSFER);
-					objectOutputStream.writeObject(transRequest);
-					Transaction deposit = new Transaction(savings.getAccount(),
-															 savings.getAccount(),
-															 transAmount,
-															 RequestType.TRANSFER);
-					objectOutputStream.writeObject(deposit);
-					checkings = (Account)objectInputStream.readObject();
-					savings = (Account)objectInputStream.readObject();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if (transAmount > checkings.getBalance()) {
+					JOptionPane.showMessageDialog(
+		                    null, 
+		                    "Insufficient Funds", 
+		                    "Enter valid amount", 
+		                    JOptionPane.ERROR_MESSAGE);
+				} else {
+					checkings.setBalance(checkings.getBalance() - transAmount);
+					savings.setBalance(savings.getBalance() + transAmount);
+					
+					try {
+						Request transRequest = new Request(RequestType.TRANSFER);
+						objectOutputStream.writeObject(transRequest);
+						Transaction transfer = new Transaction(checkings.getAccount(),
+																 savings.getAccount(),
+																 transAmount,
+																 RequestType.TRANSFER);
+						objectOutputStream.writeObject(transfer);
+						checkings = (Account)objectInputStream.readObject();
+						savings = (Account)objectInputStream.readObject();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					// send Transaction
+					// send updated Account
+					label2.setText("Checking: $" + checkings.getBalance());
+					label3.setText("Saving: $" + savings.getBalance());
 				}
-				// send Transaction
-				// send updated Account
-				label3.setText("Saving: $" + savings.getBalance());	
+				
 			}
 		});
 		
@@ -264,32 +305,38 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 		transferSaveToCheck.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				double transAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
-				// check valid amount
-				checkings.setBalance(checkings.getBalance() + transAmount);
-				savings.setBalance(savings.getBalance() - transAmount);
-				
-				// send withdraw Request
-				try {
-					Request transRequest = new Request(RequestType.TRANSFER);
-					objectOutputStream.writeObject(transRequest);
-					Transaction deposit = new Transaction(checkings.getAccount(),
-															 checkings.getAccount(),
-															 transAmount,
-															 RequestType.TRANSFER);
-					Transaction withdrawal = new Transaction(savings.getAccount(), savings.getAccount(), transAmount, RequestType.TRANSFER);
-					objectOutputStream.writeObject(deposit);
-					checkings = (Account)objectInputStream.readObject();
-					savings = (Account)objectInputStream.readObject();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				// check valid amount	
+				if (transAmount > checkings.getBalance()) {
+					JOptionPane.showMessageDialog(
+		                    null, 
+		                    "Insufficient Funds", 
+		                    "Enter valid amount", 
+		                    JOptionPane.ERROR_MESSAGE);
+				} else {
+					checkings.setBalance(checkings.getBalance() + transAmount);
+					savings.setBalance(savings.getBalance() - transAmount);
+					
+					try {
+						Request transRequest = new Request(RequestType.TRANSFER);
+						objectOutputStream.writeObject(transRequest);
+						Transaction transfer = new Transaction(savings.getAccount(),
+																 checkings.getAccount(),
+																 transAmount,
+																 RequestType.TRANSFER);
+						objectOutputStream.writeObject(transfer);
+						checkings = (Account)objectInputStream.readObject();
+						savings = (Account)objectInputStream.readObject();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					// send Transaction
+					// send updated Account
+					label2.setText("Checking: $" + checkings.getBalance());
+					label3.setText("Saving: $" + savings.getBalance());
 				}
-				// send Transaction
-				// send updated Account
-				label2.setText("Checking: $" + checkings.getBalance());
-				label3.setText("Saving: $" + savings.getBalance());
 			}
 		});
 		
@@ -305,8 +352,10 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 					objectOutputStream.writeObject(logout);
 					Request response = (Request)objectInputStream.readObject();
 					if (response.getStatus().equals(Status.SUCCESS)) {
-						frame.dispose();
-						ATMGUI atmgui = new ATMGUI();
+//						frame.dispose();
+//						ATMGUI atmgui = new ATMGUI();
+						objectOutputStream.writeObject(logout);
+						System.exit(0);
 					}
 				} catch (IOException e1) {
 					e1.printStackTrace();

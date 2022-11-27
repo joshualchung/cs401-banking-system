@@ -280,10 +280,13 @@ public class Server {
 								Transaction transfer = (Transaction)objectIn.readObject();
 								System.out.println(transfer.getAmount());
 								addTransaction(transfer.getAccount(), transfer);
+								addTransaction(transfer.getTarget(), transfer);
 								Account account = accounts.get(transfer.getAccount());
-								account.setBalance(account.getBalance() + transfer.getAmount());
+								Account targetAcc = accounts.get(transfer.getTarget());
+								targetAcc.setBalance(account.getBalance() + transfer.getAmount());
 								account.setBalance(account.getBalance() - transfer.getAmount());
 								System.out.println(accounts.get(transfer.getAccount()).getBalance());
+								System.out.println(accounts.get(transfer.getTarget()).getBalance());
 							}
 							
 							if (customerReq.getType().equals(RequestType.LOGOUT)) {
