@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class ATMGUI implements ActionListener{
+public class ATMGUI extends JFrame implements ActionListener{
 	JFrame frame = new JFrame();
 	private static JButton login = new JButton("Login");
 	
@@ -176,7 +177,7 @@ public class ATMGUI implements ActionListener{
 					System.out.println("Successful login responded");
 					Customer customer = (Customer)objectInputStream.readObject();
 
-					OptionATMGUI option = new OptionATMGUI(objectInputStream, objectOutputStream, customer);
+					new OptionATMGUI(socket, objectInputStream, objectOutputStream, customer);
 
 				} else {
 					JOptionPane.showMessageDialog(
@@ -192,15 +193,19 @@ public class ATMGUI implements ActionListener{
 			} 
 		}
 	}
+    
 	
 	public static void main(String[] args) throws ClassNotFoundException {
 		
-		try {
-			ATMGUI gui = new ATMGUI();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ATMGUI gui = new ATMGUI();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 	}
 }

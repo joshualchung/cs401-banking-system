@@ -257,6 +257,7 @@ public class Server {
 							
 							// handle requests (DEPOSIT/WITHDRAWAL/TRANSFER)
 							customerReq = (Request)objectIn.readObject();
+							System.out.println(customerReq.getType());
 							if (customerReq.getType().equals(RequestType.WITHDRAW)) {
 								Transaction withdrawal = (Transaction)objectIn.readObject();
 								System.out.println(withdrawal.getAmount());
@@ -283,10 +284,15 @@ public class Server {
 								account.setBalance(account.getBalance() + transfer.getAmount());
 								account.setBalance(account.getBalance() - transfer.getAmount());
 								System.out.println(accounts.get(transfer.getAccount()).getBalance());
+							}
 							
+							if (customerReq.getType().equals(RequestType.LOGOUT)) {
+								customerReq.setStatus(Status.SUCCESS);
+								objectOut.writeObject(customerReq);
+								break;
+							}
 						}
-
-						}
+						
 						
 					} else {
 						request.setStatus(Status.FAIL);

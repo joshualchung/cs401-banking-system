@@ -22,7 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 
-public class OptionATMGUI extends ATMGUI implements ActionListener{
+public class OptionATMGUI extends JFrame implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
 
@@ -62,7 +62,7 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 	private Account savings;
 	private int currentAccountPos;
   
-	public OptionATMGUI(ObjectInputStream objectInputStream, 
+	public OptionATMGUI(Socket socket, ObjectInputStream objectInputStream, 
 						ObjectOutputStream objectOutputStream, 
 						Customer customer) throws IOException{
 		
@@ -93,7 +93,6 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 		withdrawalChecking.setFont(new Font("Arial", Font.PLAIN, 15));
 		withdrawalChecking.setFocusable(false);
 		withdrawalChecking.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				double withdrawAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
 				// check valid amount
@@ -107,7 +106,12 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 															 withdrawAmount,
 															 RequestType.WITHDRAW);
 					objectOutputStream.writeObject(withdrawal);
+					checkings = (Account)objectInputStream.readObject();
+					savings = (Account)objectInputStream.readObject();
 				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				// send Transaction
@@ -135,7 +139,12 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 															 withdrawAmount,
 															 RequestType.WITHDRAW);
 					objectOutputStream.writeObject(withdrawal);
+					checkings = (Account)objectInputStream.readObject();
+					savings = (Account)objectInputStream.readObject();
 				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				// send Transaction
@@ -165,7 +174,12 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 															 RequestType.DEPOSIT);
 
 					objectOutputStream.writeObject(deposit);
+					checkings = (Account)objectInputStream.readObject();
+					savings = (Account)objectInputStream.readObject();
 				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				// send Transaction
@@ -193,7 +207,12 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 															 depositAmount,
 															 RequestType.DEPOSIT);
 					objectOutputStream.writeObject(deposit);
+					checkings = (Account)objectInputStream.readObject();
+					savings = (Account)objectInputStream.readObject();
 				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				// send Transaction
@@ -223,7 +242,12 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 															 transAmount,
 															 RequestType.TRANSFER);
 					objectOutputStream.writeObject(deposit);
+					checkings = (Account)objectInputStream.readObject();
+					savings = (Account)objectInputStream.readObject();
 				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				// send Transaction
@@ -254,7 +278,12 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 															 RequestType.TRANSFER);
 					Transaction withdrawal = new Transaction(savings.getAccount(), savings.getAccount(), transAmount, RequestType.TRANSFER);
 					objectOutputStream.writeObject(deposit);
+					checkings = (Account)objectInputStream.readObject();
+					savings = (Account)objectInputStream.readObject();
 				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				// send Transaction
@@ -354,8 +383,7 @@ public class OptionATMGUI extends ATMGUI implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+	
 	}
 	
 }
