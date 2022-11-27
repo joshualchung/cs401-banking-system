@@ -275,6 +275,17 @@ public class Server {
 								System.out.println(accounts.get(deposit.getAccount()).getBalance());
 							}
 							
+							if (customerReq.getType().equals(RequestType.TRANSFER)) {
+								Transaction transfer = (Transaction)objectIn.readObject();
+								System.out.println(transfer.getAmount());
+								addTransaction(transfer.getAccount(), transfer);
+								Account account = accounts.get(transfer.getAccount());
+								account.setBalance(account.getBalance() + transfer.getAmount());
+								account.setBalance(account.getBalance() - transfer.getAmount());
+								System.out.println(accounts.get(transfer.getAccount()).getBalance());
+							
+						}
+
 						}
 						
 					} else {
