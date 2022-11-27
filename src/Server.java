@@ -234,10 +234,7 @@ public class Server {
 				objectIn = new ObjectInputStream(clientSocket.getInputStream());
 				Request request = (Request)objectIn.readObject();
 				System.out.println(request.getStatus());
-				// READ CUSTOMER_LOGIN 
-					// READ LOGIN OBJECT
-						// SEND SUCCESS LOGIN 
-						// SEND FAILED LOGIN
+				
 				while (request.getType().equals(RequestType.CUSTOMER_LOGIN)) {
 					Login loginRequest = (Login)objectIn.readObject();
 					String customerCard = loginRequest.getCardNum();
@@ -250,8 +247,6 @@ public class Server {
 						objectOut.writeObject(request);
 						objectOut.writeObject(customer);
 						
-						// while handling customer actions
-							// change request type to logout and break
 						Request customerReq = (Request)objectIn.readObject();
 						System.out.println(customerReq.getType());
 						while (!customerReq.getType().equals(RequestType.LOGOUT)) {
@@ -262,10 +257,34 @@ public class Server {
 							
 							// handle requests (DEPOSIT/WITHDRAWAL/TRANSFER)
 							customerReq = (Request)objectIn.readObject();
-							// DEPOSIT
-								// RECEIVE TRANSACTION OBJECT
-								// UPDATE ACCOUNTS MAP
-								// UPDATE TRANSACTION MAP
+							if (customerReq.getType().equals(RequestType.WITHDRAW)) {
+								Transaction withdrawal = (Transaction)objectIn.readObject();
+								System.out.println(withdrawal.getAmount());
+								addTransaction(withdrawal.getAccount(), withdrawal);
+								Account account = accounts.get(withdrawal.getAccount());
+								account.setBalance(account.getBalance() - withdrawal.getAmount());
+								System.out.println(accounts.get(withdrawal.getAccount()).getBalance());
+							}
+							
+							if (customerReq.getType().equals(RequestType.DEPOSIT)) {
+								Transaction deposit = (Transaction)objectIn.readObject();
+								System.out.println(deposit.getAmount());
+								addTransaction(deposit.getAccount(), deposit);
+								Account account = accounts.get(deposit.getAccount());
+								account.setBalance(account.getBalance() + deposit.getAmount());
+								System.out.println(accounts.get(deposit.getAccount()).getBalance());
+							}
+							
+							if (customerReq.getType().equals(RequestType.TRANSFER)) {
+								Transaction transfer = (Transaction)objectIn.readObject();
+								System.out.println(transfer.getAmount());
+								addTransaction(transfer.getAccount(), transfer);
+								Account account = accounts.get(transfer.getAccount());
+								account.setBalance(account.getBalance() + transfer.getAmount());
+								account.setBalance(account.getBalance() - transfer.getAmount());
+								System.out.println(accounts.get(transfer.getAccount()).getBalance());
+							
+						}
 						}
 						
 					} else {
@@ -275,14 +294,7 @@ public class Server {
 					}
 					request = (Request)objectIn.readObject();
 				}
-				while(request.getType().equals(RequestType.WITHDRAW)) {
-					Account withdrawRequest = (Account).objectIn.readObject();
-					double balance = withdrawRequest.getBalance();
-					String accountRequest = withdrawRequest.getAccount();
-					Account withdraw = withdraw.get(balance);
-					
-					if(balance != null && )
-				}
+				
 				// TELLER_LOGIN
 				while (request.getType().equals(RequestType.TELLER_LOGIN)) {	
 					TellerLogin loginRequest = (TellerLogin)objectIn.readObject();
