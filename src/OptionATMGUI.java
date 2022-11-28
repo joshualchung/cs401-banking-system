@@ -48,8 +48,19 @@ public class OptionATMGUI implements ActionListener{
 	JTextField userID;
 	JPasswordField passwordText;
 	
+	private static JFrame pin = new JFrame();
+	private static JLabel dispense = new JLabel();
+	private static JLabel cash = new JLabel("$");
+	private static JPanel top = new JPanel();
+	private static JPanel buttons = new JPanel();
+	
+	private double amount = 0;
+	private int type = 0;
+	private String input = "";
+	private Customer customer;
 	private Account checkings;
 	private Account savings;
+	private int currentAccountPos;
   
 	public OptionATMGUI(Socket socket, ObjectInputStream objectInputStream, 
 						ObjectOutputStream objectOutputStream, 
@@ -68,6 +79,12 @@ public class OptionATMGUI implements ActionListener{
 		}
 		
 		System.out.println(checkings.getAccount());
+		
+		// receive checking
+		// receive savings
+		
+		currentAccountPos = 0;
+		
 
 		withdrawalChecking.setBounds(100, 200, 250, 70);
 		withdrawalChecking.setBackground(new Color(0xBF2620));
@@ -347,19 +364,20 @@ public class OptionATMGUI implements ActionListener{
 			}
 		});
 		
-		label1.setText("Welcome");
-		label1.setBounds(150, 50, 500, 25);
+		label1.setText("Welcome " + customer.getFirstName() + " " + customer.getLastName());
+		label1.setBounds(300, 50, 500, 25);
 		label1.setBackground(Color.YELLOW);
+		label1.setForeground(new Color(0xA8943D));
 		label1.setFont(new Font("Arial", Font.BOLD, 40));
 		
 		label2.setText("Checking: $" + checkings.getBalance());					//insert account 1 name and money amount here
 		label2.setBounds(50,100,200,25);
-		label2.setForeground(Color.white);
+		label2.setForeground(new Color(0xA8943D));
 		label2.setFont(new Font("Arial", Font.BOLD, 15));
 		
 		label3.setText("Savings $" + savings.getBalance());					//insert account 2 name and money amount here
 		label3.setBounds(400,100,200,25);
-		label3.setForeground(Color.white);
+		label3.setForeground(new Color(0xA8943D));
 		label3.setFont(new Font("Arial", Font.BOLD, 15));
 		
 		label4.setText("Current: ");
@@ -371,9 +389,9 @@ public class OptionATMGUI implements ActionListener{
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		north.setBackground(new Color(0x123456));
-		east.setBackground(new Color(0x006299));
-		west.setBackground(new Color(0x006299));
+		north.setBackground(new Color(0x041121));
+		east.setBackground(new Color(0x041121));
+		west.setBackground(new Color(0x041121));
 		
 		
 		north.setPreferredSize(new Dimension(1000,250));
@@ -391,7 +409,7 @@ public class OptionATMGUI implements ActionListener{
 		JPanel subn1 = new JPanel();
 		subn1.setPreferredSize(new Dimension(1000,150));
 		subn1.setLayout(null);
-		subn1.setBackground(new Color(0x123456));
+		subn1.setBackground(new Color(0x0B2647));
 		north.add(subn1,BorderLayout.SOUTH);
 		north.add(label1);			
 		
