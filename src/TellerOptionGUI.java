@@ -25,8 +25,8 @@ public class TellerOptionGUI implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
 
-	private static JButton withdraw = new JButton("Withdrawal Checking");
-	private static JButton deposit = new JButton("Deposit Saving");
+	private static JButton withdraw = new JButton("Withdrawal");
+	private static JButton deposit = new JButton("Deposit");
 	private static JButton transfer = new JButton("Transfer Saving to Checking");
 	private static JButton createCust = new JButton("Create Customer");
 	private static JButton deleteCust = new JButton("Delete Customer");
