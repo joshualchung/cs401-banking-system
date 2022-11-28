@@ -25,9 +25,9 @@ public class TellerOptionGUI implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
 
-	private static JButton withdraw = new JButton("Withdrawal Checking");
-	private static JButton deposit = new JButton("Deposit Saving");
-	private static JButton transfer = new JButton("Transfer Saving to Checking");
+	private static JButton withdraw = new JButton("Withdraw");
+	private static JButton deposit = new JButton("Deposit");
+	private static JButton transfer = new JButton("Transfer");
 	private static JButton createCust = new JButton("Create Customer");
 	private static JButton deleteAcc = new JButton("Delete Account");
 	private static JButton logout = new JButton("Logout");
@@ -44,10 +44,6 @@ public class TellerOptionGUI implements ActionListener{
 	
 	JTextField userID;
 	JPasswordField passwordText;
-	
-	private Customer customer;
-	private Account checkings;
-	private Account savings;
   
 	public TellerOptionGUI(Socket socket, ObjectInputStream objectInputStream, 
 						ObjectOutputStream objectOutputStream) throws IOException{
@@ -64,16 +60,10 @@ public class TellerOptionGUI implements ActionListener{
 				Account account;
 				try {
 					objectOutputStream.writeObject(new Account(accountNum, 1234));
-					account = (Account)objectInputStream.readObject();
-					if (withdrawAmount > account.getBalance()) {
-						JOptionPane.showMessageDialog(
-			                    null, 
-			                    "Insufficient Funds", 
-			                    "Enter valid amount", 
-			                    JOptionPane.ERROR_MESSAGE);
-					} else {
-						account.setBalance(account.getBalance() - withdrawAmount);
-						// send withdraw Request
+					Request response = (Request)objectInputStream.readObject();
+					System.out.println(response.getStatus());
+					if (response.getStatus().equals(Status.SUCCESS)) {
+						account = (Account)objectInputStream.readObject();
 						try {
 							Request withdrawRequest = new Request(RequestType.WITHDRAW);
 							objectOutputStream.writeObject(withdrawRequest);
@@ -85,8 +75,13 @@ public class TellerOptionGUI implements ActionListener{
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
+					} else {
+						JOptionPane.showMessageDialog(
+			                    null, 
+			                    "Invalid Account Number", 
+			                    "Enter valid account number", 
+			                    JOptionPane.ERROR_MESSAGE);
 					}
-					
 					
 				} catch (IOException | ClassNotFoundException e2) {
 					e2.printStackTrace();
@@ -106,19 +101,27 @@ public class TellerOptionGUI implements ActionListener{
 				Account account;
 				try {
 					objectOutputStream.writeObject(new Account(accountNum, 1234));
-					account = (Account)objectInputStream.readObject();
-					account.setBalance(account.getBalance() + depositAmount);
-					// send withdraw Request
-					try {
-						Request withdrawRequest = new Request(RequestType.DEPOSIT);
-						objectOutputStream.writeObject(withdrawRequest);
-						Transaction withdrawal = new Transaction(account.getAccount(),
-																 account.getAccount(),
-																 depositAmount,
-																 RequestType.DEPOSIT);
-						objectOutputStream.writeObject(withdrawal);
-					} catch (IOException e1) {
-						e1.printStackTrace();
+					Request response = (Request)objectInputStream.readObject();
+					System.out.println(response.getStatus());
+					if (response.getStatus().equals(Status.SUCCESS)) {
+						account = (Account)objectInputStream.readObject();
+						try {
+							Request depositRequest = new Request(RequestType.DEPOSIT);
+							objectOutputStream.writeObject(depositRequest);
+							Transaction withdrawal = new Transaction(account.getAccount(),
+																	 account.getAccount(),
+																	 depositAmount,
+																	 RequestType.DEPOSIT);
+							objectOutputStream.writeObject(withdrawal);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					} else {
+						JOptionPane.showMessageDialog(
+			                    null, 
+			                    "Invalid Account Number", 
+			                    "Enter valid account number", 
+			                    JOptionPane.ERROR_MESSAGE);
 					}
 				} catch (IOException | ClassNotFoundException e2) {
 					e2.printStackTrace();
@@ -140,30 +143,40 @@ public class TellerOptionGUI implements ActionListener{
 				Account transferAcc;
 				try {
 					objectOutputStream.writeObject(new Account(accountNum, 1234));
-					objectOutputStream.writeObject(new Account(transferNum, 1234));
-					account = (Account)objectInputStream.readObject();
-					transferAcc = (Account)objectInputStream.readObject();
-					if (transferAmount > account.getBalance()) {
+					Request response = (Request)objectInputStream.readObject();
+					
+					if (response.getStatus().equals(Status.SUCCESS)) {
+						account = (Account)objectInputStream.readObject();
+						Request transferRequest = new Request(RequestType.TRANSFER);
+						objectOutputStream.writeObject(transferRequest);
+						objectOutputStream.writeObject(new Account(transferNum, 1234));
+						response = (Request)objectInputStream.readObject();
+						if (response.getStatus().equals(Status.SUCCESS)) {
+							try {
+								transferAcc = (Account)objectInputStream.readObject();
+								System.out.println(account.getAccount() + transferAcc.getAccount());
+								Transaction transfer = new Transaction(account.getAccount(),
+										 transferAcc.getAccount(),
+										 transferAmount,
+										 RequestType.TRANSFER);
+								objectOutputStream.writeObject(transfer);
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+						} else {
+							JOptionPane.showMessageDialog(
+				                    null, 
+				                    "Invalid Transfer Account Number", 
+				                    "Enter valid transfer account number", 
+				                    JOptionPane.ERROR_MESSAGE);
+						}
+					} else {
 						JOptionPane.showMessageDialog(
 			                    null, 
-			                    "Insufficient Funds", 
-			                    "Enter valid amount", 
+			                    "Invalid Account Number", 
+			                    "Enter valid account number", 
 			                    JOptionPane.ERROR_MESSAGE);
-					} else {
-						try {
-							Request withdrawRequest = new Request(RequestType.TRANSFER);
-							objectOutputStream.writeObject(withdrawRequest);
-							Transaction withdrawal = new Transaction(account.getAccount(),
-																	 account.getAccount(),
-																	 transferAmount,
-																	 RequestType.TRANSFER);
-							objectOutputStream.writeObject(withdrawal);
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
 					}
-					
-					
 				} catch (IOException | ClassNotFoundException e2) {
 					e2.printStackTrace();
 				}
@@ -211,14 +224,9 @@ public class TellerOptionGUI implements ActionListener{
 					objectOutputStream.writeObject(createCustomer);
 					Customer newCust = new Customer(createFirstName, createLastName, createPin);
 					objectOutputStream.writeObject(newCust);
-					checkings = (Account)objectInputStream.readObject();
-					savings = (Account)objectInputStream.readObject();
 				} catch (IOException e1) {
 					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				} 
 			}
 		});
 		

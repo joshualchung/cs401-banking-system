@@ -323,51 +323,87 @@ public class Server {
 						request.setStatus(Status.SUCCESS);
 						System.out.println(request.getStatus());
 						objectOut.writeObject(request);
-						
-						Request tellerReq = (Request)objectIn.readObject();
-						System.out.println(tellerReq.getType());
+						Request tellerReq = new Request(RequestType.TELLER_LOGIN);
+					
 						while (!tellerReq.getType().equals(RequestType.LOGOUT)) {
-							tellerReq = (Request)objectIn.readObject();
-							System.out.println(tellerReq.getType());
-							
-							if (tellerReq.getType().equals(RequestType.WITHDRAW)) {
-								Transaction withdrawal = (Transaction)objectIn.readObject();
-								System.out.println(withdrawal.getAmount());
-								addTransaction(withdrawal.getAccount(), withdrawal);
-								Account account = accounts.get(withdrawal.getAccount());
-								account.setBalance(account.getBalance() - withdrawal.getAmount());
-								System.out.println(accounts.get(withdrawal.getAccount()).getBalance());
+							Object o = objectIn.readObject();
+							Account account = null;
+							if (o instanceof Request) {
+								tellerReq = (Request)o;
+							} else {
+								account = (Account)o;
 							}
-							
-							if (tellerReq.getType().equals(RequestType.DEPOSIT)) {
-								Transaction deposit = (Transaction)objectIn.readObject();
-								System.out.println(deposit.getAmount());
-								addTransaction(deposit.getAccount(), deposit);
-								Account account = accounts.get(deposit.getAccount());
-								account.setBalance(account.getBalance() + deposit.getAmount());
-								System.out.println(accounts.get(deposit.getAccount()).getBalance());
-							}
-							
-							if (tellerReq.getType().equals(RequestType.TRANSFER)) {
-								Transaction transfer = (Transaction)objectIn.readObject();
-								System.out.println(transfer.getAmount());
-								addTransaction(transfer.getAccount(), transfer);
-								addTransaction(transfer.getTarget(), transfer);
-								Account account = accounts.get(transfer.getAccount());
-								Account targetAcc = accounts.get(transfer.getTarget());
-								targetAcc.setBalance(account.getBalance() + transfer.getAmount());
-								account.setBalance(account.getBalance() - transfer.getAmount());
-								System.out.println(accounts.get(transfer.getAccount()).getBalance());
-								System.out.println(accounts.get(transfer.getTarget()).getBalance());
-							}
-							
-							if (tellerReq.getType().equals(RequestType.CREATECUSTOMER))
 							
 							if (tellerReq.getType().equals(RequestType.LOGOUT)) {
 								tellerReq.setStatus(Status.SUCCESS);
 								objectOut.writeObject(tellerReq);
 								save();
 								break;
+							}
+							
+							if (!accounts.containsKey(account.getAccount())) {
+								Request response = new Request(RequestType.GETACCOUNT);
+								response.setStatus(Status.FAIL);
+								objectOut.writeObject(response);
+							} else {
+								Request response = new Request(RequestType.GETACCOUNT);
+								response.setStatus(Status.SUCCESS);
+								objectOut.writeObject(response);
+								account = accounts.get(account.getAccount());
+								objectOut.writeObject(account);
+								tellerReq = (Request)objectIn.readObject();
+								System.out.println(tellerReq.getType());
+								
+								if (tellerReq.getType().equals(RequestType.WITHDRAW)) {
+									Transaction withdrawal = (Transaction)objectIn.readObject();
+									System.out.println(withdrawal.getAmount());
+									addTransaction(withdrawal.getAccount(), withdrawal);
+									account = accounts.get(withdrawal.getAccount());
+									account.setBalance(account.getBalance() - withdrawal.getAmount());
+									accounts.put(account.getAccount(), account);
+									System.out.println(accounts.get(withdrawal.getAccount()).getBalance());
+								}
+								
+								if (tellerReq.getType().equals(RequestType.DEPOSIT)) {
+									Transaction deposit = (Transaction)objectIn.readObject();
+									System.out.println(deposit.getAmount());
+									addTransaction(deposit.getAccount(), deposit);
+									account = accounts.get(deposit.getAccount());
+									account.setBalance(account.getBalance() + deposit.getAmount());
+									accounts.put(account.getAccount(), account);
+									System.out.println(accounts.get(deposit.getAccount()).getBalance());
+								}
+								
+								if (tellerReq.getType().equals(RequestType.TRANSFER)) {
+									Account transferAcc = (Account)objectIn.readObject();
+									if (!accounts.containsKey(transferAcc.getAccount())) {
+										response = new Request(RequestType.GETACCOUNT);
+										response.setStatus(Status.FAIL);
+										objectOut.writeObject(response);
+									} else {
+										response.setStatus(Status.SUCCESS);
+										objectOut.writeObject(response);
+										transferAcc = accounts.get(transferAcc.getAccount());
+										objectOut.writeObject(transferAcc);
+										Transaction transfer = (Transaction)objectIn.readObject();
+										System.out.println(transfer.getAmount());
+										addTransaction(transfer.getAccount(), transfer);
+										addTransaction(transfer.getTarget(), transfer);
+										account = accounts.get(transfer.getAccount());
+										Account targetAcc = accounts.get(transfer.getTarget());
+										targetAcc.setBalance(account.getBalance() + transfer.getAmount());
+										account.setBalance(account.getBalance() - transfer.getAmount());
+										accounts.put(account.getAccount(), account);
+										accounts.put(transferAcc.getAccount(), transferAcc);
+										System.out.println(transfer.getAccount());
+										System.out.println(transfer.getTarget());
+									}
+								}
+								
+								if (tellerReq.getType().equals(RequestType.CREATECUSTOMER)) {
+									
+								}
+								
 							}
 						}
 					} else {
