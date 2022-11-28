@@ -46,9 +46,8 @@ public class BankTellerGUI implements ActionListener{
 		frame.setSize(1000, 750); 					//sets frame size
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);  				//prevents frame from being resized 
-		frame.setUndecorated(true);   //remove the title bar
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//exits program
-		frame.setBackground(Color.LIGHT_GRAY);
+		frame.setBackground(new Color(0x041121));
 		
 		//set dimensions of panels
 		north.setPreferredSize(new Dimension(1000,125));
@@ -57,10 +56,10 @@ public class BankTellerGUI implements ActionListener{
 		west.setPreferredSize(new Dimension(225,750));
 		center.setPreferredSize(new Dimension(550,500));
 		
-		north.setBackground(Color.DARK_GRAY);
-		south.setBackground(Color.DARK_GRAY);
-		east.setBackground(Color.DARK_GRAY);
-		west.setBackground(Color.DARK_GRAY);
+		north.setBackground(new Color(0x041121));
+		south.setBackground(new Color(0x041121));
+		east.setBackground(new Color(0x041121));
+		west.setBackground(new Color(0x041121));
 		
 		//add panels to frame
 		frame.add(north,BorderLayout.NORTH);
@@ -84,23 +83,26 @@ public class BankTellerGUI implements ActionListener{
 		bannerLabel.setText("Bank Teller System Login");
 		bannerLabel.setHorizontalAlignment(JLabel.CENTER);
 		bannerLabel.setFont(new Font("Ariel", Font.BOLD, 40));
+		bannerLabel.setForeground(new Color(0xA8943D));
 		
 		idLabel.setText("ID:");
 		idLabel.setFont(new Font("Arial", Font.BOLD, 12));
 		idLabel.setBounds(175, 90, 80, 25);
+		idLabel.setForeground(new Color(0xA8943D));
 		
 		passwordLabel.setText("Password:");
 		passwordLabel.setFont(new Font("Arial", Font.BOLD, 12));
 		passwordLabel.setBounds(130, 125, 80, 25);
+		passwordLabel.setForeground(new Color(0xA8943D));
 		
 		JPanel subn = new JPanel();
 		JPanel subw = new JPanel();
 		JPanel subc = new JPanel();
 		
 		//set color of sub-panels
-		subn.setBackground(Color.DARK_GRAY);
-		subw.setBackground(Color.DARK_GRAY);
-		subc.setBackground(Color.DARK_GRAY);
+		subn.setBackground(new Color(0x0B2647));
+		subw.setBackground(new Color(0x0B2647));
+		subc.setBackground(new Color(0x0B2647));
 		
 		center.setLayout(new BorderLayout());
 		
