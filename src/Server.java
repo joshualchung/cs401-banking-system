@@ -323,7 +323,6 @@ public class Server {
 						request.setStatus(Status.SUCCESS);
 						System.out.println(request.getStatus());
 						objectOut.writeObject(request);
-						objectOut.writeObject(teller);
 						
 						Request tellerReq = (Request)objectIn.readObject();
 						System.out.println(tellerReq.getType());

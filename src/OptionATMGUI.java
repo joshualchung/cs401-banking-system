@@ -48,19 +48,8 @@ public class OptionATMGUI implements ActionListener{
 	JTextField userID;
 	JPasswordField passwordText;
 	
-	private static JFrame pin = new JFrame();
-	private static JLabel dispense = new JLabel();
-	private static JLabel cash = new JLabel("$");
-	private static JPanel top = new JPanel();
-	private static JPanel buttons = new JPanel();
-	
-	private double amount = 0;
-	private int type = 0;
-	private String input = "";
-	private Customer customer;
 	private Account checkings;
 	private Account savings;
-	private int currentAccountPos;
   
 	public OptionATMGUI(Socket socket, ObjectInputStream objectInputStream, 
 						ObjectOutputStream objectOutputStream, 
@@ -79,14 +68,8 @@ public class OptionATMGUI implements ActionListener{
 		}
 		
 		System.out.println(checkings.getAccount());
-		
-		// receive checking
-		// receive savings
-		
-		currentAccountPos = 0;
-		
 
-		withdrawalChecking.setBounds(100, 40, 250, 70);
+		withdrawalChecking.setBounds(100, 200, 250, 70);
 		withdrawalChecking.setBackground(new Color(0xBF2620));
 		withdrawalChecking.setForeground(Color.WHITE);
 		withdrawalChecking.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -127,7 +110,7 @@ public class OptionATMGUI implements ActionListener{
 			}
 		});
 		
-		withdrawalSaving.setBounds(100, 120, 250, 70);
+		withdrawalSaving.setBounds(100, 280, 250, 70);
 		withdrawalSaving.setBackground(new Color(0xBF2620));
 		withdrawalSaving.setForeground(Color.WHITE);
 		withdrawalSaving.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -168,7 +151,7 @@ public class OptionATMGUI implements ActionListener{
 			}
 		});
 		
-		depositChecking.setBounds(100,200,250,70);
+		depositChecking.setBounds(100,40,250,70);
 		depositChecking.setBackground(new Color(0x4cbfff));
 		depositChecking.setForeground(Color.WHITE);
 		depositChecking.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -211,7 +194,7 @@ public class OptionATMGUI implements ActionListener{
 			}
 		});
 		
-		depositSaving.setBounds(100,280,250,70);
+		depositSaving.setBounds(100,120,250,70);
 		depositSaving.setBackground(new Color(0x4cbfff));
 		depositSaving.setForeground(Color.WHITE);
 		depositSaving.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -366,7 +349,7 @@ public class OptionATMGUI implements ActionListener{
 		
 		label1.setText("Welcome");
 		label1.setBounds(150, 50, 500, 25);
-		label1.setBackground(Color.WHITE);
+		label1.setBackground(Color.YELLOW);
 		label1.setFont(new Font("Arial", Font.BOLD, 40));
 		
 		label2.setText("Checking: $" + checkings.getBalance());					//insert account 1 name and money amount here

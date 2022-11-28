@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -161,7 +162,6 @@ public class BankTellerGUI implements ActionListener{
 			
 			TellerLogin teller = new TellerLogin(username, password);
 			try {
-				// send customer login request
 				Request loginRequest = new Request(RequestType.TELLER_LOGIN);
 				objectOutputStream.writeObject(loginRequest);
 				objectOutputStream.flush();
@@ -172,8 +172,7 @@ public class BankTellerGUI implements ActionListener{
 				if (response.getStatus() == Status.SUCCESS) {
 					frame.dispose();
 					System.out.println("Successful teller login responded");
-					Teller customer = (Customer)objectInputStream.readObject();
-					BankTellerUserGUI option = new BankTellerUserGUI(this);
+					TellerOptionGUI newGUI = new TellerOptionGUI(socket, objectInputStream, objectOutputStream);
 
 				} else {
 					JOptionPane.showMessageDialog(
@@ -187,36 +186,20 @@ public class BankTellerGUI implements ActionListener{
 			} catch (IOException | ClassNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			} finally {
-				try {
-					if (objectInputStream != null) {
-						objectInputStream.close();
-					}
-					if (objectOutputStream != null) {
-						objectOutputStream.close();
-					}
-					if (socket != null) {
-						socket.close();
-					}
-				}
-				catch (IOException e1) {
-					e1.printStackTrace();
-				}
 			}
 		}
 	}
 	
 	public static void main(String[] args) throws ClassNotFoundException {
-		
-		try {
-			BankTellerGUI gui = new BankTellerGUI();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					BankTellerGUI gui = new BankTellerGUI();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 	}
 }
