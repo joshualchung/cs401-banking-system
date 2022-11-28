@@ -1,14 +1,15 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -176,7 +177,7 @@ public class ATMGUI implements ActionListener{
 					System.out.println("Successful login responded");
 					Customer customer = (Customer)objectInputStream.readObject();
 
-					OptionATMGUI option = new OptionATMGUI(objectInputStream, objectOutputStream, customer);
+					OptionATMGUI newGUI = new OptionATMGUI(socket, objectInputStream, objectOutputStream, customer);
 
 				} else {
 					JOptionPane.showMessageDialog(
@@ -192,15 +193,19 @@ public class ATMGUI implements ActionListener{
 			} 
 		}
 	}
+    
 	
-	public static void main(String[] args) throws ClassNotFoundException {
+	public static void main(String[] args) throws ClassNotFoundException, InvocationTargetException, InterruptedException {
 		
-		try {
-			ATMGUI gui = new ATMGUI();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ATMGUI gui = new ATMGUI();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 	}
 }
