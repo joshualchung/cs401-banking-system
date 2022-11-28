@@ -16,7 +16,7 @@
 - https://github.com/joshualchung
 - https://github.com/BurandonC
 
-##Features
+## Features
 - GUI for ATM and a Bank Teller
 - Login system for both
 - Basic functions like depositing and withdrawing money
@@ -24,5 +24,5 @@
 - A save will be applied when the user logs off the system
 - All customers and teller employees are stored on a hashmap as well as their money and transactions which doubles as a history
 
-##How to contribute
+## How to contribute
 - IDK lol
