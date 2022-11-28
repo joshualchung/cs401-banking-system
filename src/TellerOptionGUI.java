@@ -25,9 +25,9 @@ public class TellerOptionGUI implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
 
-	private static JButton withdraw = new JButton("Withdraw");
-	private static JButton deposit = new JButton("Deposit");
-	private static JButton transfer = new JButton("Transfer");
+	private static JButton withdraw = new JButton("Withdrawal Checking");
+	private static JButton deposit = new JButton("Deposit Saving");
+	private static JButton transfer = new JButton("Transfer Saving to Checking");
 	private static JButton createCust = new JButton("Create Customer");
 	private static JButton deleteCust = new JButton("Delete Customer");
 	private static JButton logout = new JButton("Logout");
@@ -44,10 +44,13 @@ public class TellerOptionGUI implements ActionListener{
 	
 	JTextField userID;
 	JPasswordField passwordText;
+	
+	private Customer customer;
+	private Account checkings;
+	private Account savings;
   
 	public TellerOptionGUI(Socket socket, ObjectInputStream objectInputStream, 
 						ObjectOutputStream objectOutputStream) throws IOException{
-		
 		withdraw.setBounds(100, 200, 250, 70);
 		withdraw.setBackground(new Color(0xBF2620));
 		withdraw.setForeground(Color.WHITE);
@@ -230,6 +233,7 @@ public class TellerOptionGUI implements ActionListener{
 			}
 		});
 		
+		
 		deleteCust.setBounds(100, 280, 250, 70);
 		deleteCust.setBackground(Color.RED);
 		deleteCust.setForeground(Color.WHITE);
@@ -258,11 +262,22 @@ public class TellerOptionGUI implements ActionListener{
 			}
 		});
 		
-		label1.setText("Welcome");
+		label1.setText("Welcome Employee");
+		label1.setForeground(new Color(0xA8943D));
 		label1.setBounds(150, 50, 500, 25);
 		label1.setBackground(Color.YELLOW);
 		label1.setFont(new Font("Arial", Font.BOLD, 40));
 		label1.setHorizontalAlignment(JLabel.CENTER);
+		
+		//label2.setText("Checking: $" + checkings.getBalance());					//insert account 1 name and money amount here
+		label2.setBounds(50,100,200,25);
+		label2.setForeground(Color.white);
+		label2.setFont(new Font("Arial", Font.BOLD, 15));
+		
+		//label3.setText("Savings $" + savings.getBalance());					//insert account 2 name and money amount here
+		label3.setBounds(400,100,200,25);
+		label3.setForeground(Color.white);
+		label3.setFont(new Font("Arial", Font.BOLD, 15));
 		
 		label4.setText("Current: ");
 		label4.setBounds(50,50,200,25);
@@ -273,9 +288,9 @@ public class TellerOptionGUI implements ActionListener{
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		north.setBackground(new Color(0x123456));
-		east.setBackground(new Color(0x006299));
-		west.setBackground(new Color(0x006299));
+		north.setBackground(new Color(0x041121));
+		east.setBackground(new Color(0x041121));
+		west.setBackground(new Color(0x041121));
 		
 		
 		north.setPreferredSize(new Dimension(1000,250));
@@ -293,7 +308,7 @@ public class TellerOptionGUI implements ActionListener{
 		JPanel subn1 = new JPanel();
 		subn1.setPreferredSize(new Dimension(1000,150));
 		subn1.setLayout(null);
-		subn1.setBackground(new Color(0x123456));
+		subn1.setBackground(new Color(0x0B2647));
 		north.add(subn1,BorderLayout.SOUTH);
 		north.add(label1);			
 		
@@ -304,10 +319,9 @@ public class TellerOptionGUI implements ActionListener{
 		west.add(withdraw);
 		east.add(transfer);;
 		west.add(deposit);
+		east.add(logout);
 		east.add(createCust);
 		east.add(deleteCust);
-		east.add(logout);
-		
 		frame.setVisible(true);
 		
 	}
