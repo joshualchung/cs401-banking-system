@@ -18,11 +18,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-
+import java.util.Random;
 import javax.swing.SwingUtilities;
 
-
-public class OptionATMGUI implements ActionListener{
+public class TellerOptionGUI implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
 
@@ -33,6 +32,8 @@ public class OptionATMGUI implements ActionListener{
 	private static JButton transferSaveToCheck = new JButton("Transfer Saving to Checking");
 	private static JButton transferCheckToSave = new JButton("Transfer Checking to Saving");
 	private static JButton switchAcc = new JButton("Switch Accounts");
+	private static JButton createCust = new JButton("Create Customer");
+	private static JButton deleteAcc = new JButton("Delete Account");
 	private static JButton logout = new JButton("Logout");
 
 	
@@ -62,7 +63,7 @@ public class OptionATMGUI implements ActionListener{
 	private Account savings;
 	private int currentAccountPos;
   
-	public OptionATMGUI(Socket socket, ObjectInputStream objectInputStream, 
+	public TellerOptionGUI(Socket socket, ObjectInputStream objectInputStream, 
 						ObjectOutputStream objectOutputStream, 
 						Customer customer) throws IOException{
 		
@@ -339,7 +340,7 @@ public class OptionATMGUI implements ActionListener{
 			}
 		});
 		
-		logout.setBounds(100,200,250,70);
+		logout.setBounds(100,360,250,70);
 		logout.setBackground(Color.RED);
 		logout.setForeground(Color.WHITE);
 		logout.setFont(new Font("Arial", Font.PLAIN, 15));
@@ -364,10 +365,37 @@ public class OptionATMGUI implements ActionListener{
 			}
 		});
 		
+		createCust.setBounds(100, 200, 250, 70);
+		createCust.setBackground(new Color(0x4cbfff));
+		createCust.setForeground(Color.white);
+		createCust.setFont(new Font("Arial", Font.PLAIN, 15));
+		createCust.setFocusable(false);
+		createCust.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String createFirstName = JOptionPane.showInputDialog("Enter first name for account: ");
+				String createLastName = JOptionPane.showInputDialog("Enter last name for account: ");
+				int createPin = Integer.parseInt(JOptionPane.showInputDialog("Enter 4 number pin: "));
+				try {
+					Request createCustomer = new Request(RequestType.CREATECUSTOMER);
+					objectOutputStream.writeObject(createCustomer);
+					Customer newCust = new Customer(createFirstName, createLastName, createPin);
+					objectOutputStream.writeObject(newCust);
+					checkings = (Account)objectInputStream.readObject();
+					savings = (Account)objectInputStream.readObject();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
 		label1.setText("Welcome");
 		label1.setBounds(150, 50, 500, 25);
 		label1.setBackground(Color.YELLOW);
 		label1.setFont(new Font("Arial", Font.BOLD, 40));
+		label1.setHorizontalAlignment(JLabel.CENTER);
 		
 		label2.setText("Checking: $" + checkings.getBalance());					//insert account 1 name and money amount here
 		label2.setBounds(50,100,200,25);

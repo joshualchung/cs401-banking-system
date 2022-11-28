@@ -43,7 +43,7 @@ public class Server {
 			server = new ServerSocket(port);
 			server.setReuseAddress(true);
 			System.out.println("Server started");
-			
+			System.out.println(transactions.size());
 			while (true) {
 				Socket client = server.accept();
 				
@@ -159,14 +159,14 @@ public class Server {
 		if (transactionList == null) {
 			transactionList = new ArrayList<Transaction>();
 			transactionList.add(transaction);
-			transactions.put(account,  transactionList);
+			transactions.put(account, transactionList);
 		} else {
 			transactionList.add(transaction);
 		}
 	}
 	
 	
-	public void save() {
+	public static void save() {
 		try {
 			FileWriter accountsFile = new FileWriter("accounts.txt");
 			FileWriter customersFile = new FileWriter("customers.txt");
@@ -174,7 +174,7 @@ public class Server {
 			FileWriter transactionsFile = new FileWriter("transactions.txt");
 			for (Customer customer : customers.values()) {
 				// write customer to file
-				customersFile.write(String.format("%s,%s,%s,%o,%s,%s\n",
+				customersFile.write(String.format("%s,%s,%s,%s,%s,%s\n",
 						customer.getFirstName(),
 						customer.getLastName(),
 						customer.getCardNum(),
@@ -183,29 +183,37 @@ public class Server {
 						customer.getAccounts().get(1)));
 			}
 			for (Account account : accounts.values()) {
-				// write customer to file
-				// HISTORY NOT INCLUDED YET. TO BE INCLUDED LATER
-				accountsFile.write(String.format("%s,%,.2f\n",
+				// write account to file
+				// write account transactions to file
+				List<Transaction> transactionList = transactions.get(account.getAccount());
+				accountsFile.write(String.format("%s,%f\n",
 						account.getAccount(),
 						account.getBalance()));
+				if (transactionList != null) {
+					transactionList.forEach(transaction -> {
+						try {
+							transactionsFile.write(String.format("%s,%s,%f,%s,%s\n",
+									transaction.getAccount(),
+									transaction.getTarget(),
+									transaction.getAmount(),
+									transaction.getRequest(),
+									transaction.getDate()));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					});
+				}
+				
 			}
 			for (TellerLogin teller : tellers.values()) {
-				tellersFile.write(String.format("%s,%s",
+				tellersFile.write(String.format("%s,%s\n",
 						teller.getUsername(),
 						teller.getPassword()));
 			}
-			
-			
-//			for (Transaction transaction : transactions.values()) {
-//				transactionsFile.write(String.format("%s,%s,%,.2f,%s",
-//						transactions.getDate(),
-//						transactions.getAccount(),
-//						transactions.getTarget(),
-//						transactions.getAmount(),
-//						transactions.getRequest()));
-//			}
+			transactionsFile.close();
 			accountsFile.close();
 			customersFile.close();
+			tellersFile.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -219,7 +227,7 @@ public class Server {
 		}
 		
 		public List<Account> getAccounts(String checkings, String savings) {
-			List<Account> customerAccounts = new ArrayList();
+			List<Account> customerAccounts = new ArrayList<Account>();
 			customerAccounts.add(accounts.get(checkings));
 			customerAccounts.add(accounts.get(savings));
 			return customerAccounts;
@@ -257,6 +265,7 @@ public class Server {
 							
 							// handle requests (DEPOSIT/WITHDRAWAL/TRANSFER)
 							customerReq = (Request)objectIn.readObject();
+							System.out.println(customerReq.getType());
 							if (customerReq.getType().equals(RequestType.WITHDRAW)) {
 								Transaction withdrawal = (Transaction)objectIn.readObject();
 								System.out.println(withdrawal.getAmount());
@@ -279,14 +288,23 @@ public class Server {
 								Transaction transfer = (Transaction)objectIn.readObject();
 								System.out.println(transfer.getAmount());
 								addTransaction(transfer.getAccount(), transfer);
+								addTransaction(transfer.getTarget(), transfer);
 								Account account = accounts.get(transfer.getAccount());
-								account.setBalance(account.getBalance() + transfer.getAmount());
+								Account targetAcc = accounts.get(transfer.getTarget());
+								targetAcc.setBalance(account.getBalance() + transfer.getAmount());
 								account.setBalance(account.getBalance() - transfer.getAmount());
 								System.out.println(accounts.get(transfer.getAccount()).getBalance());
+								System.out.println(accounts.get(transfer.getTarget()).getBalance());
+							}
 							
+							if (customerReq.getType().equals(RequestType.LOGOUT)) {
+								customerReq.setStatus(Status.SUCCESS);
+								objectOut.writeObject(customerReq);
+								save();
+								break;
+							}
 						}
-
-						}
+						
 						
 					} else {
 						request.setStatus(Status.FAIL);

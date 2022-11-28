@@ -66,4 +66,3 @@ public class Request implements Serializable{
 		return "[" + date + "] " + type + " - " + status;
 	}
 }
-
