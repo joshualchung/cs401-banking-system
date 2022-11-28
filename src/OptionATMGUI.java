@@ -30,8 +30,8 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 	private static JButton depositChecking = new JButton("Deposit Checking");
 	private static JButton withdrawalSaving = new JButton("Withdrawal Saving");
 	private static JButton depositSaving = new JButton("Deposit Saving");
-	private static JButton transferCheckToSave = new JButton("Transfer Saving to Checking");
-	private static JButton transferSaveToCheck = new JButton("Transfer Checking to Saving");
+	private static JButton transferSaveToCheck = new JButton("Transfer Saving to Checking");
+	private static JButton transferCheckToSave = new JButton("Transfer Checking to Saving");
 	private static JButton switchAcc = new JButton("Switch Accounts");
 	private static JButton logout = new JButton("Logout");
 
@@ -306,7 +306,7 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				double transAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
 				// check valid amount	
-				if (transAmount > checkings.getBalance()) {
+				if (transAmount > savings.getBalance()) {
 					JOptionPane.showMessageDialog(
 		                    null, 
 		                    "Insufficient Funds", 
