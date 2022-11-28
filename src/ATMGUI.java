@@ -73,7 +73,6 @@ public class ATMGUI implements ActionListener{
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);  				//prevents frame from being resized 
 
-		frame.setUndecorated(true);   //remove the title bar
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//exits program 
 		frame.setBackground(Color.LIGHT_GRAY);
 		
@@ -177,13 +176,14 @@ public class ATMGUI implements ActionListener{
 					System.out.println("Successful login responded");
 					Customer customer = (Customer)objectInputStream.readObject();
 
-					OptionATMGUI newGUI = new OptionATMGUI(socket, objectInputStream, objectOutputStream, customer);
+					//OptionATMGUI newGUI = new OptionATMGUI(socket, objectInputStream, objectOutputStream, customer);
+					TellerOptionGUI newGUI = new TellerOptionGUI(socket, objectInputStream, objectOutputStream, customer);
 
 				} else {
 					JOptionPane.showMessageDialog(
 		                    null, 
 		                    "Login Failed", 
-		                    "The user ID or password is incorrect. This is easily corrected by typing the correct user name and password.", 
+		                    "The user ID or password is incorrect.", 
 		                    JOptionPane.ERROR_MESSAGE);
 				}
 

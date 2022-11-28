@@ -16,6 +16,12 @@ public class Customer implements Serializable{
 		setAccounts(accounts);
 	}
 	
+	public Customer(String firstName, String lastName, int pin) {
+	    setFirst(firstName);
+	    setLast(lastName);
+	    setPin(pin);
+	}
+	
 	public void setFirst(String first) {
 		firstName = first;
 	}
