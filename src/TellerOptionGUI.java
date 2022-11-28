@@ -101,37 +101,28 @@ public class TellerOptionGUI implements ActionListener{
 		deposit.setFocusable(false);
 		deposit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String accountNum = JOptionPane.showInputDialog("Enter account number: ");
 				double depositAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
-				// check valid amount
-				if (depositAmount > checkings.getBalance()) {
-					JOptionPane.showMessageDialog(
-		                    null, 
-		                    "Insufficient Funds", 
-		                    "Enter valid amount", 
-		                    JOptionPane.ERROR_MESSAGE);
-				} else {
-					savings.setBalance(savings.getBalance() + depositAmount);
+				Account account;
+				try {
+					objectOutputStream.writeObject(new Account(accountNum, 1234));
+					account = (Account)objectInputStream.readObject();
+					account.setBalance(account.getBalance() + depositAmount);
 					// send withdraw Request
 					try {
-						Request depositRequest = new Request(RequestType.DEPOSIT);
-						objectOutputStream.writeObject(depositRequest);
-						Transaction deposit = new Transaction(savings.getAccount(),
-																 savings.getAccount(),
+						Request withdrawRequest = new Request(RequestType.DEPOSIT);
+						objectOutputStream.writeObject(withdrawRequest);
+						Transaction withdrawal = new Transaction(account.getAccount(),
+																 account.getAccount(),
 																 depositAmount,
 																 RequestType.DEPOSIT);
-						objectOutputStream.writeObject(deposit);
-						checkings = (Account)objectInputStream.readObject();
-						savings = (Account)objectInputStream.readObject();
+						objectOutputStream.writeObject(withdrawal);
 					} catch (IOException e1) {
 						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
 					}
-					// send Transaction
-					// send updated Account
-					label3.setText("Savings: $" + savings.getBalance());
-				}	
+				} catch (IOException | ClassNotFoundException e2) {
+					e2.printStackTrace();
+				}
 			}
 		});
 		
@@ -142,39 +133,41 @@ public class TellerOptionGUI implements ActionListener{
 		transfer.setFocusable(false);
 		transfer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				double transAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
-				// check valid amount	
-				if (transAmount > savings.getBalance()) {
-					JOptionPane.showMessageDialog(
-		                    null, 
-		                    "Insufficient Funds", 
-		                    "Enter valid amount", 
-		                    JOptionPane.ERROR_MESSAGE);
-				} else {
-					checkings.setBalance(checkings.getBalance() + transAmount);
-					savings.setBalance(savings.getBalance() - transAmount);
-					
-					try {
-						Request transRequest = new Request(RequestType.TRANSFER);
-						objectOutputStream.writeObject(transRequest);
-						Transaction transfer = new Transaction(savings.getAccount(),
-																 checkings.getAccount(),
-																 transAmount,
-																 RequestType.TRANSFER);
-						objectOutputStream.writeObject(transfer);
-						checkings = (Account)objectInputStream.readObject();
-						savings = (Account)objectInputStream.readObject();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				String accountNum = JOptionPane.showInputDialog("Enter account number: ");
+				String transferNum = JOptionPane.showInputDialog("Enter account number to transfer: ");
+				double transferAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
+				Account account;
+				Account transferAcc;
+				try {
+					objectOutputStream.writeObject(new Account(accountNum, 1234));
+					objectOutputStream.writeObject(new Account(transferNum, 1234));
+					account = (Account)objectInputStream.readObject();
+					transferAcc = (Account)objectInputStream.readObject();
+					if (transferAmount > account.getBalance()) {
+						JOptionPane.showMessageDialog(
+			                    null, 
+			                    "Insufficient Funds", 
+			                    "Enter valid amount", 
+			                    JOptionPane.ERROR_MESSAGE);
+					} else {
+						try {
+							Request withdrawRequest = new Request(RequestType.TRANSFER);
+							objectOutputStream.writeObject(withdrawRequest);
+							Transaction withdrawal = new Transaction(account.getAccount(),
+																	 account.getAccount(),
+																	 transferAmount,
+																	 RequestType.TRANSFER);
+							objectOutputStream.writeObject(withdrawal);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 					}
-					// send Transaction
-					// send updated Account
-					label2.setText("Checking: $" + checkings.getBalance());
-					label3.setText("Saving: $" + savings.getBalance());
+					
+					
+				} catch (IOException | ClassNotFoundException e2) {
+					e2.printStackTrace();
 				}
+
 			}
 		});
 		
