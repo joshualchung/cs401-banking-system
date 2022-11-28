@@ -1,32 +1,28 @@
 # cs401-banking-system
 
-## TODO NOW
-- add register option to atmgui
-- handle CREATECUSTOMER request
-- handle LOGOUT request
-- handle DEPOSIT/WITHDRAW/TRANSFER requests
+## What the project is about
+- This is a banking system that works over a mutli threaded server
+- There are two ways that a customer can access the banking system via ATM or through a Bank Teller that can help
+- The ATM provide simple tasks like depositing and withdrawals as well as transferring money back and forth between checking and savings
+- the Bank Teller can create and delete customers if needed
 
-## TODO LATER
-- add transaction history option
-- test customer/teller login
-- test customer atm actions
-- test teller atm actions
-- test teller account management actions
+## How to use
+- This project is to be ran on an IDE thtat supports Java
+- All files in the src folder as well as the txt files should be downloaded and put into a project folder in the IDE
+- You will have to run the server first then the two GUI either the ATMGUI or the BankTellerGUI
+- Once logged in you can do your transactions and they will be saved once you log off
 
-## Initial program start
-Server loads customers, accounts, and account histories from file.
+## Credits
+https://github.com/joshualchung
+https://github.com/BurandonC
 
-## Customer login
-1. Customer sends a login request using card number PIN to server.  
-2. Server checks with HashMap if valid combo.  
-	- if valid server opens bank gui for card number
-	- else send error card number/pin
+##Features
+GUI for ATM and a Bank Teller
+Login system for both
+Basic functions like depositing and withdrawing money
+Bank Teller will have functions for creating and deleting customer objects
+A save will be applied when the user logs off the system
+All customers and teller employees are stored on a hashmap as well as their money and transactions which doubles as a history
 
-## Customer is logged in
-1. Checking/Saving accounts shown with balance  
-2. ATM service options available  
-	- Send server request for ATM services to update account  
-	- sends transaction object to store in account history
-	
-Account history option  
-	- returns account transactions
+##How to contribute
+IDK lol
