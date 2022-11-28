@@ -22,6 +22,11 @@ public class Customer implements Serializable{
 		setPin(pin);
 	}
 	
+	public Customer(String cardNum, int pin) {
+		setCard(cardNum);
+		setPin(pin);
+	}
+	
 	public void setFirst(String first) {
 		firstName = first;
 	}
