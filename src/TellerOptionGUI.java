@@ -25,15 +25,11 @@ public class TellerOptionGUI implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
 
-	private static JButton withdrawalChecking = new JButton("Withdrawal Checking");
-	private static JButton depositChecking = new JButton("Deposit Checking");
-	private static JButton withdrawalSaving = new JButton("Withdrawal Saving");
-	private static JButton depositSaving = new JButton("Deposit Saving");
-	private static JButton transferSaveToCheck = new JButton("Transfer Saving to Checking");
-	private static JButton transferCheckToSave = new JButton("Transfer Checking to Saving");
-	private static JButton switchAcc = new JButton("Switch Accounts");
+	private static JButton withdraw = new JButton("Withdrawal Checking");
+	private static JButton deposit = new JButton("Deposit Saving");
+	private static JButton transfer = new JButton("Transfer Saving to Checking");
 	private static JButton createCust = new JButton("Create Customer");
-	private static JButton deleteAcc = new JButton("Delete Account");
+	private static JButton deleteCust = new JButton("Delete Customer");
 	private static JButton logout = new JButton("Logout");
 
 	
@@ -49,294 +45,145 @@ public class TellerOptionGUI implements ActionListener{
 	JTextField userID;
 	JPasswordField passwordText;
 	
-	private static JFrame pin = new JFrame();
-	private static JLabel dispense = new JLabel();
-	private static JLabel cash = new JLabel("$");
-	private static JPanel top = new JPanel();
-	private static JPanel buttons = new JPanel();
-	
-	private double amount = 0;
-	private int type = 0;
-	private String input = "";
 	private Customer customer;
 	private Account checkings;
 	private Account savings;
-	private int currentAccountPos;
   
 	public TellerOptionGUI(Socket socket, ObjectInputStream objectInputStream, 
-						ObjectOutputStream objectOutputStream, 
-						Customer customer) throws IOException{
-		
-		Request customerRequest = new Request(RequestType.GETALLCUSTOMERACCOUNTS);
-		
-		objectOutputStream.writeObject(customerRequest);
-		try {
-			checkings = (Account)objectInputStream.readObject();
-			savings = (Account)objectInputStream.readObject();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		System.out.println(checkings.getAccount());
-		
-		// receive checking
-		// receive savings
-		
-		currentAccountPos = 0;
-		
-
-		withdrawalChecking.setBounds(100, 200, 250, 70);
-		withdrawalChecking.setBackground(new Color(0xBF2620));
-		withdrawalChecking.setForeground(Color.WHITE);
-		withdrawalChecking.setFont(new Font("Arial", Font.PLAIN, 15));
-		withdrawalChecking.setFocusable(false);
-		withdrawalChecking.addActionListener(new ActionListener() {
+						ObjectOutputStream objectOutputStream) throws IOException{
+		withdraw.setBounds(100, 200, 250, 70);
+		withdraw.setBackground(new Color(0xBF2620));
+		withdraw.setForeground(Color.WHITE);
+		withdraw.setFont(new Font("Arial", Font.PLAIN, 15));
+		withdraw.setFocusable(false);
+		withdraw.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String accountNum = JOptionPane.showInputDialog("Enter account number: ");
 				double withdrawAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
-				// check valid amount
-				if (withdrawAmount > checkings.getBalance()) {
-					JOptionPane.showMessageDialog(
-		                    null, 
-		                    "Insufficient Funds", 
-		                    "Enter valid amount", 
-		                    JOptionPane.ERROR_MESSAGE);
-				} else {
-					checkings.setBalance(checkings.getBalance() - withdrawAmount);
-					// send withdraw Request
-					try {
-						Request withdrawRequest = new Request(RequestType.WITHDRAW);
-						objectOutputStream.writeObject(withdrawRequest);
-						Transaction withdrawal = new Transaction(checkings.getAccount(),
-																 checkings.getAccount(),
-																 withdrawAmount,
-																 RequestType.WITHDRAW);
-						objectOutputStream.writeObject(withdrawal);
-						checkings = (Account)objectInputStream.readObject();
-						savings = (Account)objectInputStream.readObject();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				Account account;
+				try {
+					objectOutputStream.writeObject(new Account(accountNum, 1234));
+					Request response = (Request)objectInputStream.readObject();
+					System.out.println(response.getStatus());
+					if (response.getStatus().equals(Status.SUCCESS)) {
+						account = (Account)objectInputStream.readObject();
+						try {
+							Request withdrawRequest = new Request(RequestType.WITHDRAW);
+							objectOutputStream.writeObject(withdrawRequest);
+							Transaction withdrawal = new Transaction(account.getAccount(),
+																	 account.getAccount(),
+																	 withdrawAmount,
+																	 RequestType.WITHDRAW);
+							objectOutputStream.writeObject(withdrawal);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					} else {
+						JOptionPane.showMessageDialog(
+			                    null, 
+			                    "Invalid Account Number", 
+			                    "Enter valid account number", 
+			                    JOptionPane.ERROR_MESSAGE);
 					}
-					// send Transaction
-					// send updated Account
-					label2.setText("Checking: $" + checkings.getBalance());	
-				}
-			}
-		});
-		
-		withdrawalSaving.setBounds(100, 280, 250, 70);
-		withdrawalSaving.setBackground(new Color(0xBF2620));
-		withdrawalSaving.setForeground(Color.WHITE);
-		withdrawalSaving.setFont(new Font("Arial", Font.PLAIN, 15));
-		withdrawalSaving.setFocusable(false);
-		withdrawalSaving.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				double withdrawAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
-				// check valid amount
-				if (withdrawAmount > checkings.getBalance()) {
-					JOptionPane.showMessageDialog(
-		                    null, 
-		                    "Insufficient Funds", 
-		                    "Enter valid amount", 
-		                    JOptionPane.ERROR_MESSAGE);
-				} else {
-					savings.setBalance(savings.getBalance() - withdrawAmount);
-					// send withdraw Request
-					try {
-						Request withdrawRequest = new Request(RequestType.WITHDRAW);
-						objectOutputStream.writeObject(withdrawRequest);
-						Transaction withdrawal = new Transaction(savings.getAccount(),
-																 savings.getAccount(),
-																 withdrawAmount,
-																 RequestType.WITHDRAW);
-						objectOutputStream.writeObject(withdrawal);
-						checkings = (Account)objectInputStream.readObject();
-						savings = (Account)objectInputStream.readObject();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					// send Transaction
-					// send updated Account
-					label3.setText("Saving: $" + savings.getBalance());	
-				}
-			}
-		});
-		
-		depositChecking.setBounds(100,40,250,70);
-		depositChecking.setBackground(new Color(0x4cbfff));
-		depositChecking.setForeground(Color.WHITE);
-		depositChecking.setFont(new Font("Arial", Font.PLAIN, 15));
-		depositChecking.setFocusable(false);
-		depositChecking.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				double depositAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
-				// check valid amount
-				if (depositAmount > checkings.getBalance()) {
-					JOptionPane.showMessageDialog(
-		                    null, 
-		                    "Insufficient Funds", 
-		                    "Enter valid amount", 
-		                    JOptionPane.ERROR_MESSAGE);
-				} else {
-					checkings.setBalance(checkings.getBalance() + depositAmount);
-					// send withdraw Request
-					try {
-						Request depositRequest = new Request(RequestType.DEPOSIT);
-						objectOutputStream.writeObject(depositRequest);
-						Transaction deposit = new Transaction(checkings.getAccount(),
-																 checkings.getAccount(),
-																 depositAmount,
-																 RequestType.DEPOSIT);
-
-						objectOutputStream.writeObject(deposit);
-						checkings = (Account)objectInputStream.readObject();
-						savings = (Account)objectInputStream.readObject();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					// send Transaction
-					// send updated Account
-					label2.setText("Checking: $" + checkings.getBalance());	
-				}
-			}
-		});
-		
-		depositSaving.setBounds(100,120,250,70);
-		depositSaving.setBackground(new Color(0x4cbfff));
-		depositSaving.setForeground(Color.WHITE);
-		depositSaving.setFont(new Font("Arial", Font.PLAIN, 15));
-		depositSaving.setFocusable(false);
-		depositSaving.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				double depositAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
-				// check valid amount
-				if (depositAmount > checkings.getBalance()) {
-					JOptionPane.showMessageDialog(
-		                    null, 
-		                    "Insufficient Funds", 
-		                    "Enter valid amount", 
-		                    JOptionPane.ERROR_MESSAGE);
-				} else {
-					savings.setBalance(savings.getBalance() + depositAmount);
-					// send withdraw Request
-					try {
-						Request depositRequest = new Request(RequestType.DEPOSIT);
-						objectOutputStream.writeObject(depositRequest);
-						Transaction deposit = new Transaction(savings.getAccount(),
-																 savings.getAccount(),
-																 depositAmount,
-																 RequestType.DEPOSIT);
-						objectOutputStream.writeObject(deposit);
-						checkings = (Account)objectInputStream.readObject();
-						savings = (Account)objectInputStream.readObject();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					// send Transaction
-					// send updated Account
-					label3.setText("Savings: $" + savings.getBalance());
-				}	
-			}
-		});
-		
-		transferCheckToSave.setBounds(100,40,250,70);
-		transferCheckToSave.setBackground(new Color(0x4cbfff));
-		transferCheckToSave.setForeground(Color.WHITE);
-		transferCheckToSave.setFont(new Font("Arial", Font.PLAIN, 15));
-		transferCheckToSave.setFocusable(false);
-		transferCheckToSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				double transAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
-				// check valid amount
-				if (transAmount > checkings.getBalance()) {
-					JOptionPane.showMessageDialog(
-		                    null, 
-		                    "Insufficient Funds", 
-		                    "Enter valid amount", 
-		                    JOptionPane.ERROR_MESSAGE);
-				} else {
-					checkings.setBalance(checkings.getBalance() - transAmount);
-					savings.setBalance(savings.getBalance() + transAmount);
 					
-					try {
-						Request transRequest = new Request(RequestType.TRANSFER);
-						objectOutputStream.writeObject(transRequest);
-						Transaction transfer = new Transaction(checkings.getAccount(),
-																 savings.getAccount(),
-																 transAmount,
-																 RequestType.TRANSFER);
-						objectOutputStream.writeObject(transfer);
-						checkings = (Account)objectInputStream.readObject();
-						savings = (Account)objectInputStream.readObject();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					// send Transaction
-					// send updated Account
-					label2.setText("Checking: $" + checkings.getBalance());
-					label3.setText("Saving: $" + savings.getBalance());
+				} catch (IOException | ClassNotFoundException e2) {
+					e2.printStackTrace();
 				}
-				
 			}
 		});
 		
-		transferSaveToCheck.setBounds(100,120,250,70);
-		transferSaveToCheck.setBackground(new Color(0x4cbfff));
-		transferSaveToCheck.setForeground(Color.WHITE);
-		transferSaveToCheck.setFont(new Font("Arial", Font.PLAIN, 15));
-		transferSaveToCheck.setFocusable(false);
-		transferSaveToCheck.addActionListener(new ActionListener() {
+		deposit.setBounds(100,120,250,70);
+		deposit.setBackground(new Color(0x4cbfff));
+		deposit.setForeground(Color.WHITE);
+		deposit.setFont(new Font("Arial", Font.PLAIN, 15));
+		deposit.setFocusable(false);
+		deposit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				double transAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
-				// check valid amount	
-				if (transAmount > savings.getBalance()) {
-					JOptionPane.showMessageDialog(
-		                    null, 
-		                    "Insufficient Funds", 
-		                    "Enter valid amount", 
-		                    JOptionPane.ERROR_MESSAGE);
-				} else {
-					checkings.setBalance(checkings.getBalance() + transAmount);
-					savings.setBalance(savings.getBalance() - transAmount);
-					
-					try {
-						Request transRequest = new Request(RequestType.TRANSFER);
-						objectOutputStream.writeObject(transRequest);
-						Transaction transfer = new Transaction(savings.getAccount(),
-																 checkings.getAccount(),
-																 transAmount,
-																 RequestType.TRANSFER);
-						objectOutputStream.writeObject(transfer);
-						checkings = (Account)objectInputStream.readObject();
-						savings = (Account)objectInputStream.readObject();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				String accountNum = JOptionPane.showInputDialog("Enter account number: ");
+				double depositAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
+				Account account;
+				try {
+					objectOutputStream.writeObject(new Account(accountNum, 1234));
+					Request response = (Request)objectInputStream.readObject();
+					System.out.println(response.getStatus());
+					if (response.getStatus().equals(Status.SUCCESS)) {
+						account = (Account)objectInputStream.readObject();
+						try {
+							Request depositRequest = new Request(RequestType.DEPOSIT);
+							objectOutputStream.writeObject(depositRequest);
+							Transaction withdrawal = new Transaction(account.getAccount(),
+																	 account.getAccount(),
+																	 depositAmount,
+																	 RequestType.DEPOSIT);
+							objectOutputStream.writeObject(withdrawal);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					} else {
+						JOptionPane.showMessageDialog(
+			                    null, 
+			                    "Invalid Account Number", 
+			                    "Enter valid account number", 
+			                    JOptionPane.ERROR_MESSAGE);
 					}
-					// send Transaction
-					// send updated Account
-					label2.setText("Checking: $" + checkings.getBalance());
-					label3.setText("Saving: $" + savings.getBalance());
+				} catch (IOException | ClassNotFoundException e2) {
+					e2.printStackTrace();
 				}
+			}
+		});
+		
+		transfer.setBounds(100,120,250,70);
+		transfer.setBackground(new Color(0x4cbfff));
+		transfer.setForeground(Color.WHITE);
+		transfer.setFont(new Font("Arial", Font.PLAIN, 15));
+		transfer.setFocusable(false);
+		transfer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String accountNum = JOptionPane.showInputDialog("Enter account number: ");
+				String transferNum = JOptionPane.showInputDialog("Enter account number to transfer: ");
+				double transferAmount = Double.parseDouble(JOptionPane.showInputDialog("Enter amount: "));
+				Account account;
+				Account transferAcc;
+				try {
+					objectOutputStream.writeObject(new Account(accountNum, 1234));
+					Request response = (Request)objectInputStream.readObject();
+					
+					if (response.getStatus().equals(Status.SUCCESS)) {
+						account = (Account)objectInputStream.readObject();
+						Request transferRequest = new Request(RequestType.TRANSFER);
+						objectOutputStream.writeObject(transferRequest);
+						objectOutputStream.writeObject(new Account(transferNum, 1234));
+						response = (Request)objectInputStream.readObject();
+						if (response.getStatus().equals(Status.SUCCESS)) {
+							try {
+								transferAcc = (Account)objectInputStream.readObject();
+								System.out.println(account.getAccount() + transferAcc.getAccount());
+								Transaction transfer = new Transaction(account.getAccount(),
+										 transferAcc.getAccount(),
+										 transferAmount,
+										 RequestType.TRANSFER);
+								objectOutputStream.writeObject(transfer);
+							} catch (IOException e1) {
+								e1.printStackTrace();
+							}
+						} else {
+							JOptionPane.showMessageDialog(
+				                    null, 
+				                    "Invalid Transfer Account Number", 
+				                    "Enter valid transfer account number", 
+				                    JOptionPane.ERROR_MESSAGE);
+						}
+					} else {
+						JOptionPane.showMessageDialog(
+			                    null, 
+			                    "Invalid Account Number", 
+			                    "Enter valid account number", 
+			                    JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (IOException | ClassNotFoundException e2) {
+					e2.printStackTrace();
+				}
+
 			}
 		});
 		
@@ -380,18 +227,36 @@ public class TellerOptionGUI implements ActionListener{
 					objectOutputStream.writeObject(createCustomer);
 					Customer newCust = new Customer(createFirstName, createLastName, createPin);
 					objectOutputStream.writeObject(newCust);
-					checkings = (Account)objectInputStream.readObject();
-					savings = (Account)objectInputStream.readObject();
 				} catch (IOException e1) {
 					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
+				} 
+			}
+		});
+		
+		
+		deleteCust.setBounds(100, 280, 250, 70);
+		deleteCust.setBackground(Color.RED);
+		deleteCust.setForeground(Color.WHITE);
+		deleteCust.setFont(new Font("Arial", Font.PLAIN, 15));
+		deleteCust.setFocusable(false);
+		deleteCust.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String firstName = JOptionPane.showInputDialog("Enter first name: ");
+				String lastName = JOptionPane.showInputDialog("Enter last name: ");
+				int pin = Integer.parseInt(JOptionPane.showInputDialog("Input pin: "));
+				try {
+					Request deleteCustomer = new Request(RequestType.REMOVECUSTOMER);
+					objectOutputStream.writeObject(deleteCustomer);
+					Customer removeCust = new Customer(firstName, lastName, pin);
+
+				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 			}
 		});
 		
 		label1.setText("Welcome");
+		label1.setForeground(new Color(0xA8943D));
 		label1.setBounds(150, 50, 500, 25);
 		label1.setBackground(Color.YELLOW);
 		label1.setFont(new Font("Arial", Font.BOLD, 40));
@@ -416,9 +281,9 @@ public class TellerOptionGUI implements ActionListener{
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		north.setBackground(new Color(0x123456));
-		east.setBackground(new Color(0x006299));
-		west.setBackground(new Color(0x006299));
+		north.setBackground(new Color(0x041121));
+		east.setBackground(new Color(0x041121));
+		west.setBackground(new Color(0x041121));
 		
 		
 		north.setPreferredSize(new Dimension(1000,250));
@@ -436,7 +301,7 @@ public class TellerOptionGUI implements ActionListener{
 		JPanel subn1 = new JPanel();
 		subn1.setPreferredSize(new Dimension(1000,150));
 		subn1.setLayout(null);
-		subn1.setBackground(new Color(0x123456));
+		subn1.setBackground(new Color(0x0B2647));
 		north.add(subn1,BorderLayout.SOUTH);
 		north.add(label1);			
 		
@@ -444,15 +309,12 @@ public class TellerOptionGUI implements ActionListener{
 		subn1.add(label3);
 		subn1.add(label4);
 		
-		west.add(withdrawalChecking);
-		west.add(depositChecking);
-		east.add(transferSaveToCheck);
-		east.add(transferCheckToSave);
-		west.add(withdrawalSaving);
-		west.add(depositSaving);
-		east.add(switchAcc);
+		west.add(withdraw);
+		east.add(transfer);;
+		west.add(deposit);
 		east.add(logout);
-		
+		east.add(createCust);
+		east.add(deleteCust);
 		frame.setVisible(true);
 		
 	}

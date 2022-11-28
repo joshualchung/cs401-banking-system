@@ -50,23 +50,23 @@ public class ATMGUI implements ActionListener{
     	cardNumber.setBounds(15, 90, 165, 25);
     	
     	userPIN = new JPasswordField();
-    	userPIN.setBounds(15, 155, 165, 25);
+    	userPIN.setBounds(15, 145, 165, 25);
     	
     	label1.setText("ATM");								//text
 		label1.setHorizontalAlignment(JLabel.CENTER);		//placement within panel 
 		label1.setVerticalAlignment(JLabel.BOTTOM);
-		label1.setForeground(Color.white);
+		label1.setForeground(new Color(0xA8943D));
 		label1.setFont(new Font("Arial", Font.BOLD, 60));
 
 		
 		label2.setText("ID:");
 		label2.setFont(new Font("Arial", Font.BOLD, 12));
-		label2.setForeground(Color.white);
+		label2.setForeground(new Color(0xA8943D));
 		label2.setBounds(175,90,80,25);
 		
 		label3.setText("Password:");
 		label3.setFont(new Font("Arial", Font.BOLD, 12));
-		label3.setForeground(Color.white);
+		label3.setForeground(new Color(0xA8943D));
 		label3.setBounds(130,145,80,25);
 		
 		frame.setSize(1000, 750);
@@ -74,7 +74,7 @@ public class ATMGUI implements ActionListener{
 		frame.setResizable(false);  				//prevents frame from being resized 
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//exits program 
-		frame.setBackground(Color.LIGHT_GRAY);
+		frame.setBackground(new Color(0x041121));
 		
 		north.setPreferredSize(new Dimension(1000,125));
 		south.setPreferredSize(new Dimension(1000,125));
@@ -82,10 +82,10 @@ public class ATMGUI implements ActionListener{
 		west.setPreferredSize(new Dimension(225,750));
 		center.setPreferredSize(new Dimension(550,500));
 		
-		north.setBackground(Color.DARK_GRAY);
-		south.setBackground(Color.DARK_GRAY);
-		east.setBackground(Color.DARK_GRAY);
-		west.setBackground(Color.DARK_GRAY);
+		north.setBackground(new Color(0x041121));
+		south.setBackground(new Color(0x041121));
+		east.setBackground(new Color(0x041121));
+		west.setBackground(new Color(0x041121));
 		
 		frame.add(north,BorderLayout.NORTH);
 		frame.add(south,BorderLayout.SOUTH);
@@ -105,9 +105,9 @@ public class ATMGUI implements ActionListener{
 		subc.setPreferredSize(new Dimension(350,335));
 		
 		//set color of sub-panels
-		subn.setBackground(Color.LIGHT_GRAY);
-		subw.setBackground(Color.LIGHT_GRAY);
-		subc.setBackground(Color.LIGHT_GRAY);
+		subn.setBackground(new Color(0x0B2647));
+		subw.setBackground(new Color(0x0B2647));
+		subc.setBackground(new Color(0x0B2647));
 		
 		center.setLayout(new BorderLayout());
 		
@@ -176,8 +176,7 @@ public class ATMGUI implements ActionListener{
 					System.out.println("Successful login responded");
 					Customer customer = (Customer)objectInputStream.readObject();
 
-					//OptionATMGUI newGUI = new OptionATMGUI(socket, objectInputStream, objectOutputStream, customer);
-					TellerOptionGUI newGUI = new TellerOptionGUI(socket, objectInputStream, objectOutputStream, customer);
+					OptionATMGUI newGUI = new OptionATMGUI(socket, objectInputStream, objectOutputStream, customer);
 
 				} else {
 					JOptionPane.showMessageDialog(
