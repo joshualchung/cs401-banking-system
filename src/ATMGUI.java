@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -11,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class ATMGUI extends JFrame implements ActionListener{
+public class ATMGUI implements ActionListener{
 	JFrame frame = new JFrame();
 	private static JButton login = new JButton("Login");
 	
@@ -179,7 +177,7 @@ public class ATMGUI extends JFrame implements ActionListener{
 					System.out.println("Successful login responded");
 					Customer customer = (Customer)objectInputStream.readObject();
 
-					new OptionATMGUI(socket, objectInputStream, objectOutputStream, customer);
+					OptionATMGUI newGUI = new OptionATMGUI(socket, objectInputStream, objectOutputStream, customer);
 
 				} else {
 					JOptionPane.showMessageDialog(
@@ -199,7 +197,7 @@ public class ATMGUI extends JFrame implements ActionListener{
 	
 	public static void main(String[] args) throws ClassNotFoundException, InvocationTargetException, InterruptedException {
 		
-		EventQueue.invokeAndWait(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					ATMGUI gui = new ATMGUI();

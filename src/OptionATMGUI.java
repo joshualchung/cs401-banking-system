@@ -22,7 +22,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 
-public class OptionATMGUI extends JFrame implements ActionListener{
+public class OptionATMGUI implements ActionListener{
 	
 	private static JFrame frame = new JFrame();
 
@@ -75,7 +75,6 @@ public class OptionATMGUI extends JFrame implements ActionListener{
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		}
 		
