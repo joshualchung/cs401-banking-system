@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+
 public class Server {
 	private ServerSocket server = null;
 	
@@ -328,6 +329,7 @@ public class Server {
 						while (!tellerReq.getType().equals(RequestType.LOGOUT)) {
 							Object o = objectIn.readObject();
 							Account account = null;
+							
 							if (o instanceof Request) {
 								tellerReq = (Request)o;
 							} else {
@@ -339,6 +341,53 @@ public class Server {
 								objectOut.writeObject(tellerReq);
 								save();
 								break;
+							}
+							
+							if (tellerReq.getType().equals(RequestType.REMOVECUSTOMER)) {
+								Customer toRemove = (Customer)objectIn.readObject();
+								if (customers.containsKey(toRemove.getCardNum())) {
+									tellerReq.setStatus(Status.SUCCESS);
+									objectOut.writeObject(tellerReq);
+									String checkingsRemove = customers.get(toRemove.getCardNum())
+																	.getAccounts().get(0);
+									String savingsRemove = customers.get(toRemove.getCardNum())
+											.getAccounts().get(1);
+									transactions.remove(checkingsRemove);
+									transactions.remove(savingsRemove);
+									accounts.remove(savingsRemove);
+									accounts.remove(checkingsRemove);
+									customers.remove(toRemove.getCardNum());
+								} else {
+									tellerReq.setStatus(Status.FAIL);
+									objectOut.writeObject(tellerReq);
+								}
+								continue;
+							}
+							
+							if (tellerReq.getType().equals(RequestType.CREATECUSTOMER)) {
+								Customer newCustomer = (Customer)objectIn.readObject();
+								Random rand = new Random();
+								String newCard = String.format("%09d", rand.nextInt(1000000000));
+								String newCheckingsNum = String.format("%09d", rand.nextInt(1000000000));
+								String newSavingsNum = String.format("%09d", rand.nextInt(1000000000));
+								while (customers.containsKey(newCard) && 
+										accounts.containsKey(newCheckingsNum) &&
+										accounts.containsKey(newSavingsNum)) {
+									newCard = String.format("%09d", rand.nextInt(1000000000));
+									newCheckingsNum = String.format("%09d", rand.nextInt(1000000000));
+									newSavingsNum = String.format("%09d", rand.nextInt(1000000000));
+								}
+								newCustomer.setCard(newCard);
+								Account newCheckings = new Account(newCheckingsNum, 0);
+								Account newSavings = new Account(newSavingsNum, 0);
+								List<String> newAccounts = new ArrayList<String>();
+								newAccounts.add(newCheckings.getAccount());
+								newAccounts.add(newSavings.getAccount());
+								newCustomer.setAccounts(newAccounts);
+								customers.put(newCustomer.getCardNum(), newCustomer);
+								accounts.put(newCheckingsNum, newCheckings);
+								accounts.put(newSavingsNum, newSavings);
+								continue;
 							}
 							
 							if (!accounts.containsKey(account.getAccount())) {
@@ -399,11 +448,6 @@ public class Server {
 										System.out.println(transfer.getTarget());
 									}
 								}
-								
-								if (tellerReq.getType().equals(RequestType.CREATECUSTOMER)) {
-									
-								}
-								
 							}
 						}
 					} else {

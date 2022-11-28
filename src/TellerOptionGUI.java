@@ -29,7 +29,7 @@ public class TellerOptionGUI implements ActionListener{
 	private static JButton deposit = new JButton("Deposit");
 	private static JButton transfer = new JButton("Transfer");
 	private static JButton createCust = new JButton("Create Customer");
-	private static JButton deleteAcc = new JButton("Delete Account");
+	private static JButton deleteCust = new JButton("Delete Customer");
 	private static JButton logout = new JButton("Logout");
 
 	
@@ -230,6 +230,34 @@ public class TellerOptionGUI implements ActionListener{
 			}
 		});
 		
+		deleteCust.setBounds(100, 280, 250, 70);
+		deleteCust.setBackground(Color.RED);
+		deleteCust.setForeground(Color.WHITE);
+		deleteCust.setFont(new Font("Arial", Font.PLAIN, 15));
+		deleteCust.setFocusable(false);
+		deleteCust.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String cardNum = JOptionPane.showInputDialog("Enter card number: ");
+				int pin = Integer.parseInt(JOptionPane.showInputDialog("Input pin: "));
+				try {
+					Request removeCustomer = new Request(RequestType.REMOVECUSTOMER);
+					objectOutputStream.writeObject(removeCustomer);
+					Customer toRemove = new Customer(cardNum, pin);
+					objectOutputStream.writeObject(toRemove);
+					Request response = (Request)objectInputStream.readObject();
+					if (response.getStatus().equals(Status.FAIL)) {
+						JOptionPane.showMessageDialog(
+			                    null, 
+			                    "Invalid Card Number", 
+			                    "Enter valid card number", 
+			                    JOptionPane.ERROR_MESSAGE);
+					}
+				} catch (IOException | ClassNotFoundException e2) {
+					e2.printStackTrace();
+				}
+			}
+		});
+		
 		label1.setText("Welcome");
 		label1.setBounds(150, 50, 500, 25);
 		label1.setBackground(Color.YELLOW);
@@ -276,6 +304,8 @@ public class TellerOptionGUI implements ActionListener{
 		west.add(withdraw);
 		east.add(transfer);;
 		west.add(deposit);
+		east.add(createCust);
+		east.add(deleteCust);
 		east.add(logout);
 		
 		frame.setVisible(true);
