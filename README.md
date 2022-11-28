@@ -13,16 +13,16 @@
 - Once logged in you can do your transactions and they will be saved once you log off
 
 ## Credits
-https://github.com/joshualchung
-https://github.com/BurandonC
+-https://github.com/joshualchung
+-https://github.com/BurandonC
 
 ##Features
-GUI for ATM and a Bank Teller
-Login system for both
-Basic functions like depositing and withdrawing money
-Bank Teller will have functions for creating and deleting customer objects
-A save will be applied when the user logs off the system
-All customers and teller employees are stored on a hashmap as well as their money and transactions which doubles as a history
+-GUI for ATM and a Bank Teller
+-Login system for both
+-Basic functions like depositing and withdrawing money
+-Bank Teller will have functions for creating and deleting customer objects
+-A save will be applied when the user logs off the system
+-All customers and teller employees are stored on a hashmap as well as their money and transactions which doubles as a history
 
 ##How to contribute
-IDK lol
+-IDK lol
