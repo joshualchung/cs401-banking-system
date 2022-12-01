@@ -1,3 +1,4 @@
+package app;
 import java.net.*;
 import java.text.ParseException;
 import java.time.LocalDateTime;
@@ -64,6 +65,22 @@ public class Server {
 				}
 			}
 		}
+	}
+	
+	public HashMap<String, Customer> getCustomers() {
+		return customers;
+	}
+	
+	public HashMap<String, Account> getAccounts() {
+		return accounts;
+	}
+	
+	public HashMap<String, TellerLogin> getTellers() {
+		return tellers;
+	}
+	
+	public HashMap<String, List<Transaction>> getTransactions() {
+		return transactions;
 	}
 	
 	// customers.txt format

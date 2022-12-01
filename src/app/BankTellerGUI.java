@@ -1,3 +1,4 @@
+package app;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,8 +9,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class ATMGUI implements ActionListener{
+public class BankTellerGUI implements ActionListener{
 	JFrame frame = new JFrame();
 	private static JButton login = new JButton("Login");
 	
@@ -29,53 +30,27 @@ public class ATMGUI implements ActionListener{
 	private static JPanel west = new JPanel();
 	private static JPanel center = new JPanel();
 	
-	private static JLabel label1 = new JLabel();
-	private static JLabel label2 = new JLabel();
-	private static JLabel label3 = new JLabel();
+	private static JLabel bannerLabel = new JLabel();
+	private static JLabel idLabel = new JLabel();
+	private static JLabel passwordLabel = new JLabel();
 	
-	JTextField cardNumber;
-	JPasswordField userPIN;
+	JTextField userID;
+	JPasswordField passwordText;
 	
-	protected Socket socket = null;
-	protected ObjectOutputStream objectOutputStream;
-	protected ObjectInputStream objectInputStream;
-    
-    public ATMGUI() throws IOException{
-    	
-    	login.setBounds(115, 200, 65, 25);
-    	login.setFocusable(false);
-    	login.addActionListener(this);
-    	
-    	cardNumber = new JTextField(20);
-    	cardNumber.setBounds(15, 90, 165, 25);
-    	
-    	userPIN = new JPasswordField();
-    	userPIN.setBounds(15, 145, 165, 25);
-    	
-    	label1.setText("ATM");								//text
-		label1.setHorizontalAlignment(JLabel.CENTER);		//placement within panel 
-		label1.setVerticalAlignment(JLabel.BOTTOM);
-		label1.setForeground(new Color(0xA8943D));
-		label1.setFont(new Font("Arial", Font.BOLD, 60));
-
+	private Socket socket;
+	private ObjectOutputStream objectOutputStream;
+	private ObjectInputStream objectInputStream;
+	
+	public BankTellerGUI() throws UnknownHostException,IOException{
 		
-		label2.setText("ID:");
-		label2.setFont(new Font("Arial", Font.BOLD, 12));
-		label2.setForeground(new Color(0xA8943D));
-		label2.setBounds(175,90,80,25);
-		
-		label3.setText("Password:");
-		label3.setFont(new Font("Arial", Font.BOLD, 12));
-		label3.setForeground(new Color(0xA8943D));
-		label3.setBounds(130,145,80,25);
-		
-		frame.setSize(1000, 750);
+		//creating frame
+		frame.setSize(1000, 750); 					//sets frame size
 		frame.setLayout(new BorderLayout());
 		frame.setResizable(false);  				//prevents frame from being resized 
-
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//exits program 
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		//exits program
 		frame.setBackground(new Color(0x041121));
 		
+		//set dimensions of panels
 		north.setPreferredSize(new Dimension(1000,125));
 		south.setPreferredSize(new Dimension(1000,125));
 		east.setPreferredSize(new Dimension(225,750));
@@ -87,22 +62,43 @@ public class ATMGUI implements ActionListener{
 		east.setBackground(new Color(0x041121));
 		west.setBackground(new Color(0x041121));
 		
+		//add panels to frame
 		frame.add(north,BorderLayout.NORTH);
 		frame.add(south,BorderLayout.SOUTH);
 		frame.add(east,BorderLayout.EAST);
 		frame.add(west,BorderLayout.WEST);
 		frame.add(center,BorderLayout.CENTER);
 		
+		//login button
+		login.setBounds(115, 200, 65, 25);
+		login.setFocusable(false);
+		login.addActionListener(this);
+		
+		userID = new JTextField(20);
+		userID.setBounds(15, 90, 165, 25);
+		
+		passwordText = new JPasswordField();
+		passwordText.setBounds(15, 125, 165, 25);
+		
+		//label designs
+		bannerLabel.setText("Bank Teller System Login");
+		bannerLabel.setHorizontalAlignment(JLabel.CENTER);
+		bannerLabel.setFont(new Font("Ariel", Font.BOLD, 40));
+		bannerLabel.setForeground(new Color(0xA8943D));
+		
+		idLabel.setText("ID:");
+		idLabel.setFont(new Font("Arial", Font.BOLD, 12));
+		idLabel.setBounds(175, 90, 80, 25);
+		idLabel.setForeground(new Color(0xA8943D));
+		
+		passwordLabel.setText("Password:");
+		passwordLabel.setFont(new Font("Arial", Font.BOLD, 12));
+		passwordLabel.setBounds(130, 125, 80, 25);
+		passwordLabel.setForeground(new Color(0xA8943D));
+		
 		JPanel subn = new JPanel();
 		JPanel subw = new JPanel();
 		JPanel subc = new JPanel();
-		
-		center.setLayout(new BorderLayout());
-		
-		//set dimensions of sub-panels
-		subn.setPreferredSize(new Dimension(200,165));
-		subw.setPreferredSize(new Dimension(200,335));
-		subc.setPreferredSize(new Dimension(350,335));
 		
 		//set color of sub-panels
 		subn.setBackground(new Color(0x0B2647));
@@ -110,6 +106,11 @@ public class ATMGUI implements ActionListener{
 		subc.setBackground(new Color(0x0B2647));
 		
 		center.setLayout(new BorderLayout());
+		
+		//set dimensions of sub-panels
+		subn.setPreferredSize(new Dimension(200,165));
+		subw.setPreferredSize(new Dimension(200,335));
+		subc.setPreferredSize(new Dimension(350,335));
 		
 		//add sub-panels to center panel
 		center.add(subn,BorderLayout.NORTH);
@@ -122,22 +123,23 @@ public class ATMGUI implements ActionListener{
 		subc.setLayout(null);
 
 		//Center panel's sub-panel top 
-		subn.add(label1);		//adding ATM title
+		subn.add(bannerLabel);		//adding ATM title
 		
 		//Center panel's sub-panel left side
-		subw.add(label2);		//user id label
-		subw.add(label3);		//password label 
+		subw.add(idLabel);		//user id label
+		subw.add(passwordLabel);		//password label 
 		
 		//Center panel's right side
-		subc.add(cardNumber);
-		subc.add(userPIN);
+		subc.add(userID);
+		subc.add(passwordText);
 		subc.add(login);
 		
-		frame.setVisible(true);	//makes frame visible
+		frame.setVisible(true);
+		
 		connectToServer();
-    }
-    
-    public void connectToServer() {
+	}
+	
+	public void connectToServer() {
     	try {
 			socket = new Socket("localhost", 1234);
 			System.out.println("Client connected to " + socket.getPort());
@@ -149,57 +151,53 @@ public class ATMGUI implements ActionListener{
 			e.printStackTrace();
 		}
     }
-    
-    @Override
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == login) {
+			String username = userID.getText();
 			@SuppressWarnings("deprecation")
-			int pin = Integer.parseInt(userPIN.getText());
-			String cardNum = cardNumber.getText();
+			String password = passwordText.getText();
 			
 			//removes userId and password after pressing login button
-			cardNumber.setText("");		
-			userPIN.setText("");			
+			userID.setText("");		
+			passwordText.setText("");			
 			
-			Login customerLogin = new Login(cardNum, pin);
+			TellerLogin teller = new TellerLogin(username, password);
 			try {
-				// send customer login request
-				Request loginRequest = new Request(RequestType.CUSTOMER_LOGIN);
+				Request loginRequest = new Request(RequestType.TELLER_LOGIN);
 				objectOutputStream.writeObject(loginRequest);
 				objectOutputStream.flush();
-				objectOutputStream.writeObject(customerLogin);
+				objectOutputStream.writeObject(teller);
 				Request response = (Request)objectInputStream.readObject();
 				System.out.println(response.getStatus());
 				
 				if (response.getStatus() == Status.SUCCESS) {
 					frame.dispose();
-					System.out.println("Successful login responded");
-					Customer customer = (Customer)objectInputStream.readObject();
-
-					OptionATMGUI newGUI = new OptionATMGUI(socket, objectInputStream, objectOutputStream, customer);
+					System.out.println("Successful teller login responded");
+					TellerOptionGUI newGUI = new TellerOptionGUI(socket, objectInputStream, objectOutputStream);
 
 				} else {
 					JOptionPane.showMessageDialog(
 		                    null, 
 		                    "Login Failed", 
 		                    "The user ID or password is incorrect.", 
+
 		                    JOptionPane.ERROR_MESSAGE);
 				}
 
 			} catch (IOException | ClassNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			} 
+			}
 		}
 	}
-    
 	
-	public static void main(String[] args) throws ClassNotFoundException, InvocationTargetException, InterruptedException {
-		
+	public static void main(String[] args) throws ClassNotFoundException {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ATMGUI gui = new ATMGUI();
+					BankTellerGUI gui = new BankTellerGUI();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
