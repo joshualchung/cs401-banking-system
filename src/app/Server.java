@@ -1,3 +1,4 @@
+package app;
 import java.net.*;
 import java.text.ParseException;
 import java.time.LocalDateTime;
@@ -34,7 +35,6 @@ public class Server {
 		try {
 			loadTransactions();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -65,6 +65,22 @@ public class Server {
 				}
 			}
 		}
+	}
+	
+	public HashMap<String, Customer> getCustomers() {
+		return customers;
+	}
+	
+	public HashMap<String, Account> getAccounts() {
+		return accounts;
+	}
+	
+	public HashMap<String, TellerLogin> getTellers() {
+		return tellers;
+	}
+	
+	public HashMap<String, List<Transaction>> getTransactions() {
+		return transactions;
 	}
 	
 	// customers.txt format
@@ -260,11 +276,10 @@ public class Server {
 						System.out.println(customerReq.getType());
 						while (!customerReq.getType().equals(RequestType.LOGOUT)) {
 							List<Account> customerAccounts = getAccounts(customer.getAccounts().get(0), 
-																   		 customer.getAccounts().get(1));
+												     customer.getAccounts().get(1));
 							objectOut.writeObject(customerAccounts.get(0));
 							objectOut.writeObject(customerAccounts.get(1));
 							
-							// handle requests (DEPOSIT/WITHDRAWAL/TRANSFER)
 							customerReq = (Request)objectIn.readObject();
 							System.out.println(customerReq.getType());
 							if (customerReq.getType().equals(RequestType.WITHDRAW)) {
@@ -348,10 +363,8 @@ public class Server {
 								if (customers.containsKey(toRemove.getCardNum())) {
 									tellerReq.setStatus(Status.SUCCESS);
 									objectOut.writeObject(tellerReq);
-									String checkingsRemove = customers.get(toRemove.getCardNum())
-																	.getAccounts().get(0);
-									String savingsRemove = customers.get(toRemove.getCardNum())
-											.getAccounts().get(1);
+									String checkingsRemove = customers.get(toRemove.getCardNum()).getAccounts().get(0);
+									String savingsRemove = customers.get(toRemove.getCardNum()).getAccounts().get(1);
 									transactions.remove(checkingsRemove);
 									transactions.remove(savingsRemove);
 									accounts.remove(savingsRemove);
@@ -456,10 +469,7 @@ public class Server {
 						objectOut.writeObject(request);
 					}
 					request = (Request)objectIn.readObject();
-				}
-				
-				
-				
+				}	
 			}
 			catch (IOException e) {
 				e.printStackTrace();

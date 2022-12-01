@@ -1,23 +1,6 @@
+package app;
 import java.io.Serializable;
 import java.util.Date;
-
-enum RequestType{
-	DEPOSIT, 
-	WITHDRAW, 
-	TRANSFER, 
-	CREATECUSTOMER, 
-	GETACCOUNT, 
-	GETCUSTOMER, 
-	CUSTOMER_LOGIN, 
-	TELLER_LOGIN,
-	LOGOUT, 
-	REMOVECUSTOMER, 
-	GETALLCUSTOMERACCOUNTS
-}
-
-enum Status{
-	PENDING, FAIL, SUCCESS
-}
 
 @SuppressWarnings("Serial")
 public class Request implements Serializable{
@@ -50,6 +33,7 @@ public class Request implements Serializable{
 	public Date getDate() {
 		return date;
 	}
+	
 	
 	public Status getStatus() {
 		return status;

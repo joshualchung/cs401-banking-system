@@ -1,9 +1,9 @@
+package app;
 import java.io.Serializable;
 
 public class Account implements Serializable{
 	private String accountNum;
 	private double balance;
-	// private List<Transaction> to implement later
 	
 	public Account(String accountNum, double balance) {
 		setAccount(accountNum);
