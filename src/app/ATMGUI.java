@@ -22,7 +22,7 @@ import javax.swing.JTextField;
 
 public class ATMGUI implements ActionListener{
 	JFrame frame = new JFrame();
-	private static JButton login = new JButton("Login");
+	public static JButton login = new JButton("Login");
 	
 	private static JPanel north = new JPanel();
 	private static JPanel south = new JPanel();
@@ -34,8 +34,8 @@ public class ATMGUI implements ActionListener{
 	private static JLabel label2 = new JLabel();
 	private static JLabel label3 = new JLabel();
 	
-	JTextField cardNumber;
-	JPasswordField userPIN;
+	public JTextField cardNumber;
+	public JPasswordField userPIN;
 	
 	protected Socket socket = null;
 	protected ObjectOutputStream objectOutputStream;

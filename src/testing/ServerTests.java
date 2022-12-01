@@ -41,6 +41,5 @@ class ServerTests {
 		List<Transaction> testList = testTransactions.get("000000000");
 		assumeTrue(testList != null);
 		assertTrue(testList.size() > 0);
-		
 	}
 }

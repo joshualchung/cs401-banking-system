@@ -5,6 +5,10 @@ public class TellerLogin implements Serializable{
 	private String username;
 	private String password;
 	
+	public TellerLogin() {
+		setUsername("");
+		setPassword("");
+	}
 	public TellerLogin(String username, String password) {
 		setUsername(username);
 		setPassword(password);
