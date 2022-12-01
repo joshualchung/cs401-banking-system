@@ -1,9 +1,12 @@
 package testing;
 import app.*;
+
+import java.io.IOException;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +18,6 @@ class ServerTests {
 	void init() {
 		testServer = new Server(8888);	
 	}
-	
 	@Test
 	public void testLoadCustomers() {
 		HashMap<String, Customer> testCustomers = testServer.getCustomers();
@@ -42,4 +44,5 @@ class ServerTests {
 		assumeTrue(testList != null);
 		assertTrue(testList.size() > 0);
 	}
+	
 }

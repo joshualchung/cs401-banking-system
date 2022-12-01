@@ -38,7 +38,10 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public ServerSocket getServerSocket() {
+		return server;
+	}
 	public Server(int port) {
 		try {
 			server = new ServerSocket(port);
