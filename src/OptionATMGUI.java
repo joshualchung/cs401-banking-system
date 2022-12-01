@@ -53,14 +53,9 @@ public class OptionATMGUI implements ActionListener{
 	private static JLabel cash = new JLabel("$");
 	private static JPanel top = new JPanel();
 	private static JPanel buttons = new JPanel();
-	
-	private double amount = 0;
-	private int type = 0;
-	private String input = "";
 	private Customer customer;
 	private Account checkings;
 	private Account savings;
-	private int currentAccountPos;
   
 	public OptionATMGUI(Socket socket, ObjectInputStream objectInputStream, 
 						ObjectOutputStream objectOutputStream, 
@@ -77,15 +72,7 @@ public class OptionATMGUI implements ActionListener{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 		System.out.println(checkings.getAccount());
-		
-		// receive checking
-		// receive savings
-		
-		currentAccountPos = 0;
-		
-
 		withdrawalChecking.setBounds(100, 200, 250, 70);
 		withdrawalChecking.setBackground(new Color(0xBF2620));
 		withdrawalChecking.setForeground(Color.WHITE);
@@ -108,20 +95,17 @@ public class OptionATMGUI implements ActionListener{
 						Request withdrawRequest = new Request(RequestType.WITHDRAW);
 						objectOutputStream.writeObject(withdrawRequest);
 						Transaction withdrawal = new Transaction(checkings.getAccount(),
-																 checkings.getAccount(),
-																 withdrawAmount,
-																 RequestType.WITHDRAW);
+											 checkings.getAccount(),
+											 withdrawAmount,
+											 RequestType.WITHDRAW);
 						objectOutputStream.writeObject(withdrawal);
 						checkings = (Account)objectInputStream.readObject();
 						savings = (Account)objectInputStream.readObject();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					// send Transaction
-					// send updated Account
 					label2.setText("Checking: $" + checkings.getBalance());	
 				}
 			}
@@ -144,25 +128,21 @@ public class OptionATMGUI implements ActionListener{
 		                    JOptionPane.ERROR_MESSAGE);
 				} else {
 					savings.setBalance(savings.getBalance() - withdrawAmount);
-					// send withdraw Request
 					try {
 						Request withdrawRequest = new Request(RequestType.WITHDRAW);
 						objectOutputStream.writeObject(withdrawRequest);
 						Transaction withdrawal = new Transaction(savings.getAccount(),
-																 savings.getAccount(),
-																 withdrawAmount,
-																 RequestType.WITHDRAW);
+											 savings.getAccount(),
+											 withdrawAmount,
+											 RequestType.WITHDRAW);
 						objectOutputStream.writeObject(withdrawal);
 						checkings = (Account)objectInputStream.readObject();
 						savings = (Account)objectInputStream.readObject();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					// send Transaction
-					// send updated Account
 					label3.setText("Saving: $" + savings.getBalance());	
 				}
 			}
@@ -191,21 +171,17 @@ public class OptionATMGUI implements ActionListener{
 						Request depositRequest = new Request(RequestType.DEPOSIT);
 						objectOutputStream.writeObject(depositRequest);
 						Transaction deposit = new Transaction(checkings.getAccount(),
-																 checkings.getAccount(),
-																 depositAmount,
-																 RequestType.DEPOSIT);
-
+										      checkings.getAccount(),
+										      depositAmount,
+										      RequestType.DEPOSIT);
 						objectOutputStream.writeObject(deposit);
 						checkings = (Account)objectInputStream.readObject();
 						savings = (Account)objectInputStream.readObject();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					// send Transaction
-					// send updated Account
 					label2.setText("Checking: $" + checkings.getBalance());	
 				}
 			}
@@ -228,7 +204,6 @@ public class OptionATMGUI implements ActionListener{
 		                    JOptionPane.ERROR_MESSAGE);
 				} else {
 					savings.setBalance(savings.getBalance() + depositAmount);
-					// send withdraw Request
 					try {
 						Request depositRequest = new Request(RequestType.DEPOSIT);
 						objectOutputStream.writeObject(depositRequest);
@@ -242,11 +217,8 @@ public class OptionATMGUI implements ActionListener{
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					// send Transaction
-					// send updated Account
 					label3.setText("Savings: $" + savings.getBalance());
 				}	
 			}
@@ -275,24 +247,20 @@ public class OptionATMGUI implements ActionListener{
 						Request transRequest = new Request(RequestType.TRANSFER);
 						objectOutputStream.writeObject(transRequest);
 						Transaction transfer = new Transaction(checkings.getAccount(),
-																 savings.getAccount(),
-																 transAmount,
-																 RequestType.TRANSFER);
+											savings.getAccount(),
+											transAmount,
+											RequestType.TRANSFER);
 						objectOutputStream.writeObject(transfer);
 						checkings = (Account)objectInputStream.readObject();
 						savings = (Account)objectInputStream.readObject();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					// send Transaction
-					// send updated Account
 					label2.setText("Checking: $" + checkings.getBalance());
 					label3.setText("Saving: $" + savings.getBalance());
 				}
-				
 			}
 		});
 		
@@ -319,20 +287,17 @@ public class OptionATMGUI implements ActionListener{
 						Request transRequest = new Request(RequestType.TRANSFER);
 						objectOutputStream.writeObject(transRequest);
 						Transaction transfer = new Transaction(savings.getAccount(),
-																 checkings.getAccount(),
-																 transAmount,
-																 RequestType.TRANSFER);
+											checkings.getAccount(),
+											transAmount,
+											RequestType.TRANSFER);
 						objectOutputStream.writeObject(transfer);
 						checkings = (Account)objectInputStream.readObject();
 						savings = (Account)objectInputStream.readObject();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					// send Transaction
-					// send updated Account
 					label2.setText("Checking: $" + checkings.getBalance());
 					label3.setText("Saving: $" + savings.getBalance());
 				}
